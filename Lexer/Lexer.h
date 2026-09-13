@@ -1,31 +1,36 @@
+#pragma once
+
 #include <vector>
 #include <string>
-#include "Token.cpp"
+#include "Token.h"
 
 class Lexer {
     public: 
-        Lexer(const std::string& source); 
-        std::vector<Token> scanTokens();
+        Lexer(const std::string& source) : Source(source){}; 
+        std::vector<Token> ScanTokens();
 
     private:
-        void scanToken();
-        void addToken(TokenType type);
+        void ScanToken();
+        void AddToken(TokenType type);
 
-        void identifer(); 
-        void number(); 
-        void string(); 
+        void Identifer(); 
+        void Number(); 
+        void String(); 
 
-        bool isAtEnd() const;
-        bool match(char expected);
+        bool IsAtEnd() const;
+        bool Match(char expected);
         
-        bool isDigit() const;
-        bool isAlphaNumeric() const; 
+        bool IsDigit() const;
+        bool IsAlphaNumeric() const; 
 
-        char advance();
-        char peek();
-        char peekNext();
+        char Advance();
+        char Peek();
+        char PeekNext();
         
-        std::string source; 
-        int line = 1; 
+        const std::string Source; 
+        std::vector<Token> Tokens_ {};
 
+        size_t m_Start{}; 
+        size_t m_Current{};
+        size_t m_Line{1}; 
 };

@@ -1,10 +1,25 @@
+#pragma once
 enum class TokenType {
-    Integer, Float, 
-
+    // Literals
+    Identifier, Integer, Float, 
+    
+    // Single Character Tokens
     LeftParen, RightParen,
     LeftBrace, RightBrace,
-    LeftSquare, RightSquare,
-
     Plus, Minus, 
-    Mul, Div
+    Star, Slash, 
+    Comma, Dot,
+    Colon, SemiColon,
+
+    // One or two character tokens
+    Bang, BangEqual, 
+    Equal, EqualEqual,
+    Greater, GreaterEqual,
+    Less, LessEqual,
+
+    // Keywords
+    And, Class, Else, False, Fn, For, If, Nil, Or, 
+    Print, Return, Super, This, True, Var, While, 
+
+    Eof
 }; 
