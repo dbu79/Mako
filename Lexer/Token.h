@@ -1,6 +1,8 @@
 #pragma once
 
 #include "TokenType.h"
+#include <iterator>
+#include <sstream>
 #include <string_view>
 #include <string>
 
@@ -11,4 +13,10 @@ struct Token {
         TokenType Type; 
         std::string Lexeme;
         size_t Line;
+
+    std::string ToString() const {
+        std::ostringstream oss;
+        oss << "" << Lexeme << " " << Line;
+        return oss.str();
+    };
 };
