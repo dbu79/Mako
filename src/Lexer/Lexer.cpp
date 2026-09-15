@@ -62,6 +62,9 @@ void Lexer::ScanToken(){
             m_Line++;
             break;
         
+        // Strings
+        case '"':
+            
         // Default case
     };
 };
@@ -108,7 +111,7 @@ void Lexer::String(){
     Advance();
 
     std::string value { Source.substr(m_Start + 1, (m_Current - m_Start) - 2) };
-    AddToken(TokenType::String);
+    AddToken(TokenType::String, value);
 
 };
 
