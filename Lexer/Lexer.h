@@ -2,7 +2,9 @@
 
 #include <vector>
 #include <string>
+#include <any>
 #include "Token.h"
+#include "TokenType.h"
 
 class Lexer {
     public: 
@@ -12,6 +14,7 @@ class Lexer {
     private:
         void ScanToken();
         void AddToken(TokenType type);
+        void AddToken(TokenType type, std::any literal);
 
         void Identifer(); 
         void Number(); 
@@ -20,8 +23,10 @@ class Lexer {
         bool IsAtEnd() const;
         bool Match(char expected);
         
-        bool IsDigit() const;
-        bool IsAlphaNumeric() const; 
+        bool IsDigit(char c) const;
+        bool IsAlpha(char c) const; 
+        bool IsAlphaNumeric(char c) const;
+
 
         char Advance();
         char Peek();

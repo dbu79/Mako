@@ -1,7 +1,5 @@
-
-#include <array>
-#include <regex>
 #include <vector>
+#include <any>
 #include "Lexer.h"
 #include "TokenType.h"
 
@@ -10,7 +8,7 @@ std::vector<Token> Lexer::ScanTokens(){
         m_Start = m_Current; 
         ScanToken();
     }
-    Tokens_.emplace_back(TokenType::Eof, "", m_Line);
+    Tokens_.emplace_back(TokenType::Eof, "", nullptr, m_Line);
     return Tokens_;
 };
 
@@ -38,43 +36,111 @@ void Lexer::ScanToken(){
         
         // Multi Char Tokens
         case '!': 
-            Match('=') ? AddToken(TokenType::BangEqual) : AddToken(TokenType::Bang); 
+            AddToken(Match('=') ? TokenType::BangEqual : TokenType::Bang); 
             break; 
         case '>': 
-            Match('=') ? AddToken(TokenType::GreaterEqual) : AddToken(TokenType::Greater);
+            AddToken(Match('=') ? TokenType::GreaterEqual : TokenType::Greater);
             break;
         case '<':
-            Match('=') ? AddToken(TokenType::LessEqual) : AddToken(TokenType::Less);
+            AddToken(Match('=') ? TokenType::LessEqual : TokenType::Less);
             break;
-
         case '+': 
-            Match('+') ? AddToken(TokenType::PlusPlus) : AddToken(TokenType::Plus); 
+            AddToken(Match('+') ? TokenType::PlusPlus : (Match('=') ? TokenType::PlusEqual : TokenType::Plus)); 
             break; 
         case '-': 
-            Match('-') ? AddToken(TokenType::MinusMinus) : AddToken(TokenType::Minus); 
+            AddToken(Match('-') ? TokenType::MinusMinus : (Match('=') ? TokenType::MinusEqual : TokenType::Minus)); 
             break; 
+
+        // Whitespace
+        case ' ': 
+            [[fallthrough]];
+        case '\r': 
+            [[fallthrough]];
+        case '\t':
+            break;
+        case '\n': 
+            m_Line++;
+            break;
+        
+        // Default case
     };
 };
 
-void Lexer::AddToken(TokenType type){
-    auto lexeme = Source.substr(m_Start, m_Start - m_Current);
-    Tokens_.emplace_back(type, lexeme, m_Line);
+void Lexer::AddToken(TokenType type, std::any literal){
+    auto lexeme = Source.substr(m_Start, m_Current - m_Start);
+    Tokens_.emplace_back(type, lexeme, literal, m_Line);
 };
+
+void Lexer::AddToken(TokenType type){
+    AddToken(type, nullptr);
+}
     
-void Lexer::Identifer(){};
+void Lexer::Identifer(){
+    while (IsAlphaNumeric(Peek())) Advance();
+
+    AddToken(TokenType::Identifier);
+};
+
+
+void Lexer::Number(){
+    while (IsDigit(Peek())) Advance();
+
+    if (Peek() == '.' && IsDigit(PeekNext())){
+        Advance();
+        while (IsDigit(Peek())) Advance();
+    };
+
+    AddToken(TokenType::Number);
+};
+
+void Lexer::String(){
+    while (Peek() != '"' && !IsAtEnd()){
+        if (Peek() == '\n') {
+            m_Line++;
+        };
+        Advance();
+    }
+
+    if (IsAtEnd()){
+        // Error 
+    }
+
+    Advance();
+
+    std::string value { Source.substr(m_Start + 1, (m_Current - m_Start) - 2) };
+    AddToken(TokenType::String);
+
+};
 
 bool Lexer::IsAtEnd() const {
     return m_Current >= Source.length();
 }
 
-bool Lexer::Match(char expected){};
-
-bool Lexer::IsDigit() const {
-    std::string nums[10] = {"0", "1", "2", "3", "4", "5", "6", "8", "9"};
-
-
+bool Lexer::Match(char expected){
+    if (IsAtEnd()){
+        return false;
+    };
+    if (Source[m_Current] != expected){
+        return false;
+    };
+    m_Current++;
+    return true;
 };
-bool Lexer::IsAlphaNumeric() const {};
+
+bool Lexer::IsDigit(char c) const {
+    if (c >= '0' && c <= '9') return true;
+    return false;
+};
+
+bool Lexer::IsAlpha(char c) const {
+    return (c >= 'a' && c <= 'z') || 
+           (c >= 'A' && c <= 'Z') ||
+           (c == '_');
+};
+
+bool Lexer::IsAlphaNumeric(char c) const {
+    return IsDigit(c) || IsAlpha(c);
+};
 
 char Lexer::Advance(){
     m_Current++;

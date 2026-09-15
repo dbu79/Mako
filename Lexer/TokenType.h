@@ -1,8 +1,8 @@
 #pragma once
 enum class TokenType {
     // Literals
-    Identifier, Integer, Float, 
-    
+    Identifier, String, Number, 
+
     // Single Character Tokens
     LeftParen, RightParen,
     LeftBrace, RightBrace,
@@ -17,6 +17,7 @@ enum class TokenType {
     Greater, GreaterEqual,
     Less, LessEqual,
     PlusPlus, MinusMinus,
+    PlusEqual, MinusEqual,
 
     // Keywords
     And, Class, Else, False, Fn, For, If, Nil, Or, 
