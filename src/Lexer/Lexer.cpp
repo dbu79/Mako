@@ -2,6 +2,7 @@
 #include <any>
 #include "Lexer.h"
 #include "TokenType.h"
+#include "Error/ErrorReporter.h"
 
 std::vector<Token> Lexer::ScanTokens(){
     while (!IsAtEnd()){
@@ -63,10 +64,19 @@ void Lexer::ScanToken(){
             break;
         
         // Strings
-        case '"':
-            
+        case '"': String(); break;
+
         // Default case
-    };
+        default: {
+            if (IsDigit(c)){
+                Number();
+            } else if (IsAlpha(c)){
+                Identifer();
+            } else {
+                ErrorReporter::Error(m_Line, "Unexpected character.");
+            }
+        }
+    }
 };
 
 void Lexer::AddToken(TokenType type, std::any literal){
@@ -105,12 +115,13 @@ void Lexer::String(){
     }
 
     if (IsAtEnd()){
-        // Error 
+        ErrorReporter::Error(m_Line, "Unterminated string.");
+        return;
     }
 
     Advance();
 
-    std::string value { Source.substr(m_Start + 1, (m_Current - m_Start) - 2) };
+    std::string value = Source.substr(m_Start + 1, (m_Current - m_Start) - 2);
     AddToken(TokenType::String, value);
 
 };
