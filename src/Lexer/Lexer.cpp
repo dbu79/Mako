@@ -2,54 +2,53 @@
 #include <any>
 #include "Lexer.h"
 #include "TokenType.h"
-#include "Error/ErrorReporter.h"
+#include "../Error/ErrorReporter.h"
 
 std::vector<Token> Lexer::ScanTokens(){
     while (!IsAtEnd()){
         m_Start = m_Current; 
         ScanToken();
     }
-    Tokens_.emplace_back(TokenType::Eof, "", nullptr, m_Line);
+    Tokens_.emplace_back(TokenType::END_OF_FILE, "", nullptr, m_Line);
     return Tokens_;
 };
 
 void Lexer::ScanToken(){
-    // view and call AddToken
     char c {Advance()};
     switch (c){
         // Single Char Tokens
-        case '(': AddToken(TokenType::LeftParen); break; 
-        case ')': AddToken(TokenType::RightParen); break; 
-        case '{': AddToken(TokenType::LeftBrace); break; 
-        case '}': AddToken(TokenType::RightBrace); break; 
-        case '*': AddToken(TokenType::Star); break; 
-        case ',': AddToken(TokenType::Comma); break; 
-        case '.': AddToken(TokenType::Dot); break; 
-        case ':': AddToken(TokenType::Colon); break; 
-        case ';': AddToken(TokenType::SemiColon); break; 
+        case '(': AddToken(TokenType::LEFTPAREN); break; 
+        case ')': AddToken(TokenType::RIGHTPAREN); break; 
+        case '{': AddToken(TokenType::LEFTBRACE); break; 
+        case '}': AddToken(TokenType::RIGHTBRACE); break; 
+        case '*': AddToken(TokenType::STAR); break; 
+        case ',': AddToken(TokenType::COMMA); break; 
+        case '.': AddToken(TokenType::DOT); break; 
+        case ':': AddToken(TokenType::COLON); break; 
+        case ';': AddToken(TokenType::SEMICOLON); break; 
         case '/': 
         // Handle Comments
             if (Match('/')){
                 while(Peek() != '\n' && !IsAtEnd()) Advance();
             } else {
-                AddToken(TokenType::Slash);
+                AddToken(TokenType::SLASH);
             } break;
         
         // Multi Char Tokens
         case '!': 
-            AddToken(Match('=') ? TokenType::BangEqual : TokenType::Bang); 
+            AddToken(Match('=') ? TokenType::BANGEQUAL : TokenType::BANG); 
             break; 
         case '>': 
-            AddToken(Match('=') ? TokenType::GreaterEqual : TokenType::Greater);
+            AddToken(Match('=') ? TokenType::GREATEREQUAL : TokenType::GREATER);
             break;
         case '<':
-            AddToken(Match('=') ? TokenType::LessEqual : TokenType::Less);
+            AddToken(Match('=') ? TokenType::LESSEQUAL : TokenType::LESS);
             break;
         case '+': 
-            AddToken(Match('+') ? TokenType::PlusPlus : (Match('=') ? TokenType::PlusEqual : TokenType::Plus)); 
+            AddToken(Match('+') ? TokenType::PLUSPLUS : (Match('=') ? TokenType::PLUSEQUAL : TokenType::PLUS)); 
             break; 
         case '-': 
-            AddToken(Match('-') ? TokenType::MinusMinus : (Match('=') ? TokenType::MinusEqual : TokenType::Minus)); 
+            AddToken(Match('-') ? TokenType::MINUSMINUS : (Match('=') ? TokenType::MINUSEQUAL : TokenType::MINUS)); 
             break; 
 
         // Whitespace
@@ -91,9 +90,8 @@ void Lexer::AddToken(TokenType type){
 void Lexer::Identifer(){
     while (IsAlphaNumeric(Peek())) Advance();
 
-    AddToken(TokenType::Identifier);
+    AddToken(TokenType::IDENTIFIER); 
 };
-
 
 void Lexer::Number(){
     while (IsDigit(Peek())) Advance();
@@ -103,7 +101,7 @@ void Lexer::Number(){
         while (IsDigit(Peek())) Advance();
     };
 
-    AddToken(TokenType::Number);
+    AddToken(TokenType::NUMBER);
 };
 
 void Lexer::String(){
@@ -122,7 +120,7 @@ void Lexer::String(){
     Advance();
 
     std::string value = Source.substr(m_Start + 1, (m_Current - m_Start) - 2);
-    AddToken(TokenType::String, value);
+    AddToken(TokenType::STRING, value);
 
 };
 

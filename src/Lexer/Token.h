@@ -1,9 +1,7 @@
 #pragma once
 
 #include "TokenType.h"
-#include <iterator>
 #include <sstream>
-#include <string_view>
 #include <string>
 #include <any>
 
@@ -18,7 +16,19 @@ struct Token {
 
     std::string ToString() const {
         std::ostringstream oss;
-        oss << "" << Lexeme << " " << Line;
+        oss << static_cast<int>(Type) << " ";
+        oss << Lexeme << " ";       
+
+        if (Literal.has_value()){
+            if (Literal.type() == typeid(std::string)){
+                oss << std::any_cast<std::string>(Literal);
+            } else if (Literal.type() == typeid(int)){
+                oss << std::any_cast<int>(Literal);
+            } else if (Literal.type() == typeid(double)){
+                oss << std::any_cast<double>(Literal);
+            }
+        }
+        oss << " " << Line;
         return oss.str();
     };
 };

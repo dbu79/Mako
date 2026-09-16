@@ -1,27 +1,27 @@
 #pragma once
 enum class TokenType {
     // Literals
-    Identifier, String, Number, 
+    IDENTIFIER, STRING, NUMBER, 
 
     // Single Character Tokens
-    LeftParen, RightParen,
-    LeftBrace, RightBrace,
-    Plus, Minus, 
-    Star, Slash, 
-    Comma, Dot,
-    Colon, SemiColon,
+    LEFTPAREN, RIGHTPAREN,
+    LEFTBRACE, RIGHTBRACE,
+    PLUS, MINUS, 
+    STAR, SLASH, 
+    COMMA, DOT,
+    COLON, SEMICOLON,
 
-    // One or two character tokens
-    Bang, BangEqual, 
-    Equal, EqualEqual,
-    Greater, GreaterEqual,
-    Less, LessEqual,
-    PlusPlus, MinusMinus,
-    PlusEqual, MinusEqual,
+    // One or Two Character Tokens
+    BANG, BANGEQUAL, 
+    EQUAL, EQUALEQUAL,
+    GREATER, GREATEREQUAL,
+    LESS, LESSEQUAL,
+    PLUSPLUS, MINUSMINUS,
+    PLUSEQUAL, MINUSEQUAL,
 
     // Keywords
-    And, Class, Else, False, Fn, For, If, Nil, Or, 
-    Print, Return, Super, This, True, Var, While, 
+    AND, CLASS, ELSE, FALSE, FN, FOR, IF, NIL, OR, 
+    PRINT, RETURN, SUPER, THIS, TRUE, VAR, WHILE, BREAK,
 
-    Eof
+    END_OF_FILE
 }; 
