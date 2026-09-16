@@ -3,6 +3,7 @@
 #include "Lexer.h"
 #include "TokenType.h"
 #include "../Error/ErrorReporter.h"
+#include "Keywords.h"
 
 std::vector<Token> Lexer::ScanTokens(){
     while (!IsAtEnd()){
@@ -89,8 +90,14 @@ void Lexer::AddToken(TokenType type){
     
 void Lexer::Identifer(){
     while (IsAlphaNumeric(Peek())) Advance();
+    
+    std::string text = Source.substr(m_Start, m_Current - m_Start);
+    if (Keywords.find(text) != Keywords.end()){
+        AddToken(Keywords.at(text));
+        return;
+    }
 
-    AddToken(TokenType::IDENTIFIER); 
+    AddToken(TokenType::IDENTIFIER);
 };
 
 void Lexer::Number(){
