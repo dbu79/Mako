@@ -1,0 +1,3 @@
+/home/daniel/Projects/Mako/build/CMakeFiles/Mako.dir
+/home/daniel/Projects/Mako/build/CMakeFiles/edit_cache.dir
+/home/daniel/Projects/Mako/build/CMakeFiles/rebuild_cache.dir

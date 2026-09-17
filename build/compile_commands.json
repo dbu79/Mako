@@ -1,0 +1,14 @@
+[
+{
+  "directory": "/home/daniel/Projects/Mako/build",
+  "command": "/usr/bin/c++  -I/home/daniel/Projects/Mako/src -std=gnu++17 -o CMakeFiles/Mako.dir/main.cpp.o -c /home/daniel/Projects/Mako/main.cpp",
+  "file": "/home/daniel/Projects/Mako/main.cpp",
+  "output": "CMakeFiles/Mako.dir/main.cpp.o"
+},
+{
+  "directory": "/home/daniel/Projects/Mako/build",
+  "command": "/usr/bin/c++  -I/home/daniel/Projects/Mako/src -std=gnu++17 -o CMakeFiles/Mako.dir/src/Lexer/Lexer.cpp.o -c /home/daniel/Projects/Mako/src/Lexer/Lexer.cpp",
+  "file": "/home/daniel/Projects/Mako/src/Lexer/Lexer.cpp",
+  "output": "CMakeFiles/Mako.dir/src/Lexer/Lexer.cpp.o"
+}
+]
