@@ -1,4 +1,7 @@
+#include <fstream>
 #include <iostream>
+#include <sstream>
+
 
 #include "src/Lexer/Lexer.h"
 
@@ -13,9 +16,30 @@ void Run(std::string source){
 }
 
 void RunFile(std::string path){
+    std::ifstream file(path);
+    if (!file){
+        std::cout << "Could not open file: " << path << "\n";
+        std::exit(65);
+    } 
+
+    std::ostringstream buffer;
+    buffer << file.rdbuf();
+    Run(buffer.str());
 
 };
-void RunPrompt(){};
+void RunPrompt(){
+    std::string input;
+    while (true){
+        std::cout << "> ";
+        if (!std::getline(std::cin, input)){
+            std::cout << "\n";
+            break;
+        }
+        if (input.empty()) continue;
+
+        Run(input);
+    }
+};
 
 int main(int argc, char* argv[]){
     if (argc > 2){
@@ -27,3 +51,4 @@ int main(int argc, char* argv[]){
         RunPrompt();
     }
 }
+

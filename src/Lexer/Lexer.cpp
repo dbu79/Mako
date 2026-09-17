@@ -38,7 +38,10 @@ void Lexer::ScanToken(){
         // Multi Char Tokens
         case '!': 
             AddToken(Match('=') ? TokenType::BANGEQUAL : TokenType::BANG); 
-            break; 
+            break;
+        case '=':
+            AddToken(Match('=') ? TokenType::EQUALEQUAL : TokenType::EQUAL);
+            break;
         case '>': 
             AddToken(Match('=') ? TokenType::GREATEREQUAL : TokenType::GREATER);
             break;

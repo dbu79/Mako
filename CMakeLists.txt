@@ -13,5 +13,5 @@ add_executable(Mako
 )
 
 target_include_directories(Mako PRIVATE 
-    src
+    ${CMAKE_SOURCE_DIR}
 )
