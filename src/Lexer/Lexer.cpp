@@ -1,3 +1,4 @@
+#include <string>
 #include <vector>
 #include <any>
 #include "Lexer.h"
@@ -110,8 +111,10 @@ void Lexer::Number(){
         Advance();
         while (IsDigit(Peek())) Advance();
     };
-
-    AddToken(TokenType::NUMBER);
+    
+    std::string value = Source.substr(m_Start, m_Current - m_Start);
+    double literal = std::stod(value);
+    AddToken(TokenType::NUMBER, literal);
 };
 
 void Lexer::String(){

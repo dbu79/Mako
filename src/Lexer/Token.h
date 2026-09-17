@@ -16,19 +16,23 @@ struct Token {
 
     std::string ToString() const {
         std::ostringstream oss;
-        oss << static_cast<int>(Type) << " ";
-        oss << Lexeme << " ";       
+        
+        oss << "Type: " << TokenToString(Type) << " ";
+        oss << "Lexeme: " << Lexeme << " ";       
 
         if (Literal.has_value()){
+            oss << "Literal: ";
             if (Literal.type() == typeid(std::string)){
-                oss << std::any_cast<std::string>(Literal);
+                oss << std::any_cast<std::string>(Literal) << " ";
             } else if (Literal.type() == typeid(int)){
-                oss << std::any_cast<int>(Literal);
+                oss << std::any_cast<int>(Literal) << " ";
             } else if (Literal.type() == typeid(double)){
-                oss << std::any_cast<double>(Literal);
+                oss << std::any_cast<double>(Literal) << " ";
+            } else {
+                oss << "Unknown ";
             }
         }
-        oss << " " << Line;
+        oss << "Line: " << Line;
         return oss.str();
     };
 };
