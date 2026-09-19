@@ -1,5 +1,5 @@
 #include "../Lexer/Token.h"
-
+#include "ExprPtr.h"
 
 class Expr {
     public: 
@@ -7,11 +7,12 @@ class Expr {
         class Binary;
     };
 
+
 class Expr::Binary: public Expr {
     private:
-        Expr m_Left; 
+        ExprPtr m_Left; 
         Token m_Operator;
-        Expr m_Right;
+        ExprPtr m_Right;
     public:
-        Binary(Expr m_Left, Token m_Operator, Expr m_Right) : m_Left(m_Left), m_Operator(m_Operator), m_Right(m_Right) {};
+        Binary(ExprPtr left, Token op, ExprPtr right) : m_Left(std::move(left)), m_Operator(std::move(op)), m_Right(std::move(right)) {};
 };
