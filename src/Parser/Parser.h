@@ -12,14 +12,20 @@ class Parser {
         ExprPtr Expression();
         ExprPtr Equality();       
         ExprPtr Comparison();
+        ExprPtr Term();
+        ExprPtr Factor();
+        ExprPtr Unary();
+        ExprPtr Primary();
+        
 
         bool Match(std::initializer_list<TokenType> types);
-        bool Check(TokenType type);
-        bool IsAtEnd();
+        bool Check(TokenType type) const;
+        bool IsAtEnd() const;
 
-        Token Peek();
-        Token Previous();
+        const Token& Peek() const;
+        const Token& Previous() const;
         Token Advance();
+        Token Consume(TokenType type, std::string message);
 
     public:
         Parser(const std::vector<Token>& tokens) : m_Tokens(tokens) {};
