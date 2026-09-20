@@ -16,7 +16,6 @@ class Parser {
         ExprPtr Factor();
         ExprPtr Unary();
         ExprPtr Primary();
-        
 
         bool Match(std::initializer_list<TokenType> types);
         bool Check(TokenType type) const;
@@ -26,9 +25,10 @@ class Parser {
         const Token& Previous() const;
         Token Advance();
         Token Consume(TokenType type, std::string message);
-
+        
+        void Synchronize();
     public:
         Parser(const std::vector<Token>& tokens) : m_Tokens(tokens) {};
-
+        ExprPtr Parse();       
 };
 

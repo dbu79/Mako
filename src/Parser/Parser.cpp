@@ -4,7 +4,7 @@
 #include <memory>
 
 ExprPtr Parser::Expression(){
-    return Parser::Equality();
+    return Equality();
 }
 
 ExprPtr Parser::Equality(){
@@ -89,6 +89,14 @@ ExprPtr Parser::Primary(){
     throw ErrorReporter::Error(Peek(), "Expect expression.");
 }
 
+ExprPtr Parser::Parse(){
+    try {
+        return Expression();
+    } catch (const ErrorReporter::ParseError&){
+        return nullptr;
+    }
+}
+
 bool Parser::Match(std::initializer_list<TokenType> types){
     for (TokenType type : types) {
         if (Check(type)){
@@ -128,3 +136,26 @@ Token Parser::Consume(TokenType type, std::string message){
     
     throw ErrorReporter::Error(Peek(), message);
 }
+
+void Parser::Synchronize(){
+    Advance();
+
+    while (!IsAtEnd()){
+        if (Previous().Type == TokenType::SEMICOLON) return;
+    
+    switch (Peek().Type){
+        case TokenType::CLASS:
+        case TokenType::FN:
+        case TokenType::VAR:
+        case TokenType::FOR:
+        case TokenType::IF:
+        case TokenType::WHILE:
+        case TokenType::PRINT:
+        case TokenType::RETURN:
+            return;
+        }
+        Advance();
+    }
+}
+
+
