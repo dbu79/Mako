@@ -7,9 +7,9 @@
 
 struct Token {
     Token(TokenType type, std::string lexeme, std::any literal, std::size_t line)
-        : Type(type), Lexeme(lexeme), Literal(literal),  Line(line){};
+        : Type(type), Lexeme(std::move(lexeme)), Literal(std::move(literal)),  Line(line){}
 
-        TokenType Type; 
+        TokenType Type;
         std::string Lexeme;
         std::any Literal;
         size_t Line;
@@ -34,5 +34,5 @@ struct Token {
         }
         oss << "Line: " << Line;
         return oss.str();
-    };
+    }
 };
