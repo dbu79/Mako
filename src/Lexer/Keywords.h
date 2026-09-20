@@ -19,6 +19,7 @@ const std::unordered_map<std::string, TokenType> Keywords = {
     { "return", TokenType::RETURN },
     { "super", TokenType::SUPER },
     { "this", TokenType::THIS },
+    { "var", TokenType::VAR },
     { "true", TokenType::TRUE },
     { "while", TokenType::WHILE },
     { "break", TokenType::BREAK },
