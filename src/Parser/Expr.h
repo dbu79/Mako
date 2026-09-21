@@ -1,9 +1,9 @@
 #pragma once
 
 #include <any>
-#include <memory>
 #include <utility>
 #include "../Lexer/Token.h"
+#include "ExprPtr.h"
 
 class Expr {
 public:
@@ -25,8 +25,6 @@ class Expr::Visitor {
         virtual std::any VisitLiteralExpr(const Literal& expr) = 0;
         virtual std::any VisitUnaryExpr(const Unary& expr) = 0;
 };
-
-using ExprPtr = std::unique_ptr<Expr>;
 
 class Expr::Binary : public Expr {
 public:

@@ -2,16 +2,21 @@
 #include <iostream>
 #include <sstream>
 
-
 #include "src/Lexer/Lexer.h"
+#include "src/Parser/Parser.h"
+#include "src/Error/ErrorReporter.h"
 
 void Run(std::string source){
     Lexer lexer(source);
     std::vector<Token> tokens = lexer.ScanTokens();
 
-    for (const auto& token : tokens){
-        std::cout << token.ToString() << "\n";
-    }
+    // for (const auto& token : tokens){
+    //     std::cout << token.ToString() << "\n";
+    // }
+    
+    Parser parser(tokens);
+    ExprPtr expression = parser.Parse();
+    if (ErrorReporter::HadError()) return;
 
 }
 

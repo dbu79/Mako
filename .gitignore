@@ -1,1 +1,4 @@
 build/
+
+src/Parser/generate_ast
+src/Parser/generate_ast.cpp
