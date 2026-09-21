@@ -3,6 +3,7 @@
 #include "../Lexer/TokenType.h"
 
 bool ErrorReporter::m_HadError = false;
+bool ErrorReporter::m_HadRuntimeError = false;
 
 void ErrorReporter::Error(size_t line, const std::string& message){
     Report(line, "", message);
@@ -23,10 +24,19 @@ void ErrorReporter::Report(size_t line, const std::string& where, const std::str
     m_HadError = true;
 }
 
+void ErrorReporter::ReportRuntimeError(const RuntimeError &error){
+    std::cerr << error.what() << "\n[line " << error.token.Line << "]" << "\n"; 
+    m_HadRuntimeError = true;
+}
 
 bool ErrorReporter::HadError(){
     return m_HadError;
 }
+
+bool ErrorReporter::HadRuntimeError(){
+    return m_HadRuntimeError;
+}
 void ErrorReporter::Reset(){
     m_HadError = false;
+    m_HadRuntimeError = false;
 }
