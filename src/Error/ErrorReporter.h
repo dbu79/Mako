@@ -18,14 +18,13 @@ class ErrorReporter {
 
         static void Error(size_t line, const std::string& message);
         static ParseError Error(const Token& token, const std::string& message);
-        
+        static void ReportRuntimeError(const RuntimeError& error);
         static bool HadError();
         static bool HadRuntimeError();
         static void Reset();
 
     private:
         static void Report(size_t line, const std::string& where, const std::string& message);
-        static void ReportRuntimeError(const RuntimeError& error);
         
         static bool m_HadError;
         static bool m_HadRuntimeError;
