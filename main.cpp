@@ -5,19 +5,19 @@
 #include "src/Lexer/Lexer.h"
 #include "src/Parser/Parser.h"
 #include "src/Error/ErrorReporter.h"
+#include "src/Interpreter/Interpreter.h"
+
+static Interpreter interpreter;
 
 void Run(std::string source){
     Lexer lexer(source);
     std::vector<Token> tokens = lexer.ScanTokens();
 
-    // for (const auto& token : tokens){
-    //     std::cout << token.ToString() << "\n";
-    // }
-    
     Parser parser(tokens);
     ExprPtr expression = parser.Parse();
     if (ErrorReporter::HadError()) return;
 
+    interpreter.Interpret(*expression);
 }
 
 void RunFile(std::string path){
@@ -31,7 +31,10 @@ void RunFile(std::string path){
     buffer << file.rdbuf();
     Run(buffer.str());
 
+    if (ErrorReporter::HadError()) std::exit(65);
+    if (ErrorReporter::HadRuntimeError()) std::exit(70);
 };
+
 void RunPrompt(){
     std::string input;
     while (true){
@@ -43,6 +46,7 @@ void RunPrompt(){
         if (input.empty()) continue;
 
         Run(input);
+        ErrorReporter::Reset();
     }
 };
 
@@ -55,5 +59,6 @@ int main(int argc, char* argv[]){
     } else {
         RunPrompt();
     }
+    return 0;
 }
 
