@@ -22,21 +22,21 @@ public:
     class Visitor;
 
     virtual ~Stmt() = default;
-    virtual std::any Accept(Visitor& visitor) const = 0;
+    virtual void Accept(Visitor& visitor) const = 0;
 };
 
 class Stmt::Visitor {
 public:
     virtual ~Visitor() = default;
-    virtual std::any VisitBlockStmt(const Block& stmt) = 0;
-    virtual std::any VisitExpressionStmt(const Expression& stmt) = 0;
-    virtual std::any VisitFunctionStmt(const Function& stmt) = 0;
-    virtual std::any VisitClassStmt(const Class& stmt) = 0;
-    virtual std::any VisitIfStmt(const If& stmt) = 0;
-    virtual std::any VisitPrintStmt(const Print& stmt) = 0;
-    virtual std::any VisitReturnStmt(const Return& stmt) = 0;
-    virtual std::any VisitVarStmt(const Var& stmt) = 0;
-    virtual std::any VisitWhileStmt(const While& stmt) = 0;
+    virtual void VisitBlockStmt(const Block& stmt) = 0;
+    virtual void VisitExpressionStmt(const Expression& stmt) = 0;
+    virtual void VisitFunctionStmt(const Function& stmt) = 0;
+    virtual void VisitClassStmt(const Class& stmt) = 0;
+    virtual void VisitIfStmt(const If& stmt) = 0;
+    virtual void VisitPrintStmt(const Print& stmt) = 0;
+    virtual void VisitReturnStmt(const Return& stmt) = 0;
+    virtual void VisitVarStmt(const Var& stmt) = 0;
+    virtual void VisitWhileStmt(const While& stmt) = 0;
 };
 
 class Stmt::Block : public Stmt {
@@ -44,8 +44,8 @@ public:
     Block(std::vector<StmtPtr> statements)
         : statements(std::move(statements)) {}
 
-    std::any Accept(Visitor& visitor) const override {
-        return visitor.VisitBlockStmt(*this);
+    void Accept(Visitor& visitor) const override {
+        visitor.VisitBlockStmt(*this);
     }
 
     std::vector<StmtPtr> statements;
@@ -56,8 +56,8 @@ public:
     Expression(ExprPtr expression)
         : expression(std::move(expression)) {}
 
-    std::any Accept(Visitor& visitor) const override {
-        return visitor.VisitExpressionStmt(*this);
+    void Accept(Visitor& visitor) const override {
+        visitor.VisitExpressionStmt(*this);
     }
 
     ExprPtr expression;
@@ -70,8 +70,8 @@ public:
           params(std::move(params)),
           body(std::move(body)) {}
 
-    std::any Accept(Visitor& visitor) const override {
-        return visitor.VisitFunctionStmt(*this);
+    void Accept(Visitor& visitor) const override {
+        visitor.VisitFunctionStmt(*this);
     }
 
     Token name;
@@ -86,8 +86,8 @@ public:
           superclass(std::move(superclass)),
           methods(std::move(methods)) {}
 
-    std::any Accept(Visitor& visitor) const override {
-        return visitor.VisitClassStmt(*this);
+    void Accept(Visitor& visitor) const override {
+        visitor.VisitClassStmt(*this);
     }
 
     Token name;
@@ -102,8 +102,8 @@ public:
           thenBranch(std::move(thenBranch)),
           elseBranch(std::move(elseBranch)) {}
 
-    std::any Accept(Visitor& visitor) const override {
-        return visitor.VisitIfStmt(*this);
+    void Accept(Visitor& visitor) const override {
+        visitor.VisitIfStmt(*this);
     }
 
     ExprPtr condition;
@@ -116,8 +116,8 @@ public:
     Print(ExprPtr expression)
         : expression(std::move(expression)) {}
 
-    std::any Accept(Visitor& visitor) const override {
-        return visitor.VisitPrintStmt(*this);
+    void Accept(Visitor& visitor) const override {
+        visitor.VisitPrintStmt(*this);
     }
 
     ExprPtr expression;
@@ -129,8 +129,8 @@ public:
         : keyword(std::move(keyword)),
           value(std::move(value)) {}
 
-    std::any Accept(Visitor& visitor) const override {
-        return visitor.VisitReturnStmt(*this);
+    void Accept(Visitor& visitor) const override {
+        visitor.VisitReturnStmt(*this);
     }
 
     Token keyword;
@@ -143,8 +143,8 @@ public:
         : name(std::move(name)),
           initializer(std::move(initializer)) {}
 
-    std::any Accept(Visitor& visitor) const override {
-        return visitor.VisitVarStmt(*this);
+    void Accept(Visitor& visitor) const override {
+        visitor.VisitVarStmt(*this);
     }
 
     Token name;
@@ -157,8 +157,8 @@ public:
         : condition(std::move(condition)),
           body(std::move(body)) {}
 
-    std::any Accept(Visitor& visitor) const override {
-        return visitor.VisitWhileStmt(*this);
+    void Accept(Visitor& visitor) const override {
+        visitor.VisitWhileStmt(*this);
     }
 
     ExprPtr condition;
