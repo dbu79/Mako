@@ -11,6 +11,7 @@ public:
     class Grouping;
     class Literal;
     class Unary;
+    class Variable;
     class Visitor;
 
     virtual ~Expr() = default;
@@ -24,6 +25,7 @@ class Expr::Visitor {
         virtual std::any VisitGroupingExpr(const Grouping& expr) = 0;
         virtual std::any VisitLiteralExpr(const Literal& expr) = 0;
         virtual std::any VisitUnaryExpr(const Unary& expr) = 0;
+        virtual std::any VisitVariableExpr(const Variable& expr) = 0;
 };
 
 class Expr::Binary : public Expr {
@@ -80,3 +82,14 @@ public:
     ExprPtr right;
 };
 
+class Expr::Variable : public Expr {
+    public:
+        Variable(Token name) 
+            : name(std::move(name)) {};
+        
+        std::any Accept(Visitor& visitor) const override {
+            return visitor.VisitVariableExpr(*this);
+        }
+
+        Token name;
+};
