@@ -10,6 +10,8 @@ add_executable(Mako
     main.cpp
     src/Error/ErrorReporter.cpp
     src/Lexer/Lexer.cpp
+    src/Parser/Parser.cpp
+    src/Interpreter/Interpreter.cpp
 )
 
 target_include_directories(Mako PRIVATE 

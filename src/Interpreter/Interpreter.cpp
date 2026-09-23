@@ -6,39 +6,14 @@
 #include <sstream>
 #include <string>
 
-void Interpreter::Interpret(const Expr& expr){
+void Interpreter::Interpret(const std::vector<StmtPtr>& statements){
     try {
-        std::any value = Evaluate(expr);
-        std::cout << Stringify(value) << "\n";
+        for (const StmtPtr& statement : statements){
+            Execute(statement);
+        }
     } catch (const ErrorReporter::RuntimeError& error){
         ErrorReporter::ReportRuntimeError(error);
     }
-}
-
-std::string Interpreter::Stringify(const std::any &object){
-    if (!object.has_value() || object.type() == typeid(std::nullptr_t)) return "nil";
-
-    if (object.type() == typeid(double)) {
-        double double_ = std::any_cast<double>(object);
-        std::ostringstream ss;
-        ss << double_;
-        std::string text = ss.str();
-
-        if (text.size() >= 2 && text.compare(text.size() - 2, 2, ".0") == 0) {
-            text = text.substr(0, text.size() - 2);
-        }
-        return text;
-    }
-
-    if (object.type() == typeid(bool)){
-        return std::any_cast<bool>(object) ? "true" : "false";
-    }
-
-    if (object.type() == typeid(std::string)) {
-        return std::any_cast<std::string>(object);
-    }
-
-    return "<?>";
 }
 
 std::any Interpreter::VisitLiteralExpr(const Expr::Literal& expr){
@@ -108,6 +83,23 @@ std::any Interpreter::VisitBinaryExpr(const Expr::Binary& expr){
     return nullptr;
 }
 
+std::any Interpreter::VisitVariableExpr(const Expr::Variable &expr){
+    // To Do
+    return std::any{};
+}
+
+
+void Interpreter::VisitExpressionStmt(const Stmt::Expression &stmt){
+    Evaluate(*stmt.expression);
+}
+
+void Interpreter::VisitPrintStmt(const Stmt::Print &stmt){
+    std::any value = Evaluate(*stmt.expression);
+    std::cout << Stringify(value);
+}
+
+
+
 bool Interpreter::IsTruthy(const std::any& object){
     if (!object.has_value() || object.type() == typeid(std::nullptr_t)) return false;
     if (object.type() == typeid(bool)) return std::any_cast<bool>(object);
@@ -135,3 +127,28 @@ void Interpreter::CheckNumberOperands(const Token &op, const std::any &left, con
     throw ErrorReporter::RuntimeError(op, "Operands must be a number.");
 }
 
+std::string Interpreter::Stringify(const std::any &object){
+    if (!object.has_value() || object.type() == typeid(std::nullptr_t)) return "nil";
+
+    if (object.type() == typeid(double)) {
+        double double_ = std::any_cast<double>(object);
+        std::ostringstream ss;
+        ss << double_;
+        std::string text = ss.str();
+
+        if (text.size() >= 2 && text.compare(text.size() - 2, 2, ".0") == 0) {
+            text = text.substr(0, text.size() - 2);
+        }
+        return text;
+    }
+
+    if (object.type() == typeid(bool)){
+        return std::any_cast<bool>(object) ? "true" : "false";
+    }
+
+    if (object.type() == typeid(std::string)) {
+        return std::any_cast<std::string>(object);
+    }
+
+    return "<?>";
+}

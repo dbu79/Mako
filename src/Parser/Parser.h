@@ -1,7 +1,7 @@
 #include "../Lexer/Token.h"
 #include "Expr.h"
 #include "../Lexer/TokenType.h"
-#include "ExprPtr.h"
+#include "Stmt.h"
 #include <vector>
 
 class Parser {
@@ -17,6 +17,10 @@ class Parser {
         ExprPtr Unary();
         ExprPtr Primary();
 
+        StmtPtr Statement();
+        StmtPtr PrintStatement();
+        StmtPtr ExpressionStatement();
+
         bool Match(std::initializer_list<TokenType> types);
         bool Check(TokenType type) const;
         bool IsAtEnd() const;
@@ -27,8 +31,9 @@ class Parser {
         Token Consume(TokenType type, std::string message);
         
         void Synchronize();
+
     public:
         Parser(const std::vector<Token>& tokens) : m_Tokens(tokens) {};
-        ExprPtr Parse();       
+        std::vector<StmtPtr> Parse();      
 };
 

@@ -1,6 +1,7 @@
 #include <fstream>
 #include <iostream>
 #include <sstream>
+#include <vector>
 
 #include "src/Lexer/Lexer.h"
 #include "src/Parser/Parser.h"
@@ -14,10 +15,10 @@ void Run(std::string source){
     std::vector<Token> tokens = lexer.ScanTokens();
 
     Parser parser(tokens);
-    ExprPtr expression = parser.Parse();
+    std::vector<StmtPtr> statements = parser.Parse();
     if (ErrorReporter::HadError()) return;
 
-    interpreter.Interpret(*expression);
+    interpreter.Interpret(statements);
 }
 
 void RunFile(std::string path){
