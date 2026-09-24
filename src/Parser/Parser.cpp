@@ -1,6 +1,5 @@
 #include "Parser.h"
 #include "../Error/ErrorReporter.h"
-#include "src/Lexer/TokenType.h"
 #include "src/Parser/Stmt.h"
 #include <initializer_list>
 #include <memory>
@@ -82,7 +81,9 @@ ExprPtr Parser::Primary(){
     if (Match({TokenType::NUMBER, TokenType::STRING})){
         return std::make_unique<Expr::Literal>(Previous().Literal);
     }
-
+    if (Match({TokenType::IDENTIFIER})){
+        return std::make_unique<Expr::Variable>(Previous());
+    }
     if (Match({TokenType::LEFTPAREN})){
         ExprPtr expr = Expression(); 
         Consume(TokenType::RIGHTPAREN, "Expect ')' after expression.");
@@ -110,12 +111,34 @@ StmtPtr Parser::ExpressionStatement(){
     return std::make_unique<Stmt::Expression>(std::move(value));
 }
 
+StmtPtr Parser::Declaration(){
+    try {
+        if (Match({TokenType::VAR})) return VarDeclaration();
+        return Statement();
+    } catch (const ErrorReporter::ParseError& error){
+        Synchronize();
+        return nullptr;
+    }
+}
+
+StmtPtr Parser::VarDeclaration(){
+    Token name = Consume(TokenType::IDENTIFIER, "Expect variable name.");
+
+    ExprPtr initializer = nullptr;
+    if (Match({TokenType::EQUAL})){
+        initializer = Expression();
+    }
+
+    Consume(TokenType::SEMICOLON, "Expected ';' after variable declaration.");
+    return std::make_unique<Stmt::Var>(std::move(name), std::move(initializer));
+}
+
 std::vector<StmtPtr> Parser::Parse(){
     std::vector<StmtPtr> statements; 
     while (!IsAtEnd()){
-        statements.emplace_back(Statement());
+        statements.emplace_back(Declaration());
     }
-
+ 
     return statements;
 }
 

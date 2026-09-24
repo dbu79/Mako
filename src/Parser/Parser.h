@@ -1,3 +1,5 @@
+#pragma once
+
 #include "../Lexer/Token.h"
 #include "Expr.h"
 #include "../Lexer/TokenType.h"
@@ -20,6 +22,8 @@ class Parser {
         StmtPtr Statement();
         StmtPtr PrintStatement();
         StmtPtr ExpressionStatement();
+        StmtPtr VarDeclaration();
+        StmtPtr Declaration();
 
         bool Match(std::initializer_list<TokenType> types);
         bool Check(TokenType type) const;
