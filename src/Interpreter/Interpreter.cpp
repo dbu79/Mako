@@ -84,8 +84,7 @@ std::any Interpreter::VisitBinaryExpr(const Expr::Binary& expr){
 }
 
 std::any Interpreter::VisitVariableExpr(const Expr::Variable &expr){
-    // To Do
-    return std::any{};
+    return Environment.Get(expr.name);
 }
 
 
@@ -95,7 +94,7 @@ void Interpreter::VisitExpressionStmt(const Stmt::Expression &stmt){
 
 void Interpreter::VisitPrintStmt(const Stmt::Print &stmt){
     std::any value = Evaluate(*stmt.expression);
-    std::cout << Stringify(value);
+    std::cout << Stringify(value) << "\n";
 }
 
 

@@ -1,3 +1,5 @@
+#pragma once
+
 #include "../Lexer/Token.h"
 #include <stdexcept>
 #include <string>

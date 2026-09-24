@@ -2,6 +2,7 @@
 
 #include "../Parser/Expr.h"
 #include "../Parser/Stmt.h"
+#include "src/Environment/Environment.h"
 #include <string>
 
 class Interpreter : public Expr::Visitor, public Stmt::Visitor {
@@ -24,6 +25,8 @@ class Interpreter : public Expr::Visitor, public Stmt::Visitor {
 
         void Interpret(const std::vector<StmtPtr>& expr);
     private:
+        Environment(Environment);
+
         std::any Evaluate(const Expr& expr) { return expr.Accept(*this);}
         void Execute(const StmtPtr& stmt) { return stmt->Accept(*this);}
 
