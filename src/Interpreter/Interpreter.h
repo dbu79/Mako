@@ -2,7 +2,7 @@
 
 #include "../Parser/Expr.h"
 #include "../Parser/Stmt.h"
-#include "src/Environment/Environment.h"
+#include "../Environment/Environment.h"
 #include <string>
 
 class Interpreter : public Expr::Visitor, public Stmt::Visitor {
@@ -12,20 +12,21 @@ class Interpreter : public Expr::Visitor, public Stmt::Visitor {
         std::any VisitUnaryExpr(const Expr::Unary& expr) override;
         std::any VisitBinaryExpr(const Expr::Binary& expr) override;
         std::any VisitVariableExpr(const Expr::Variable& expr) override;
-        
-        void VisitBlockStmt(const Stmt::Block& stmt) override;
+        std::any VisitAssignExpr(const Expr::Assign& expr) override;
+
         void VisitExpressionStmt(const Stmt::Expression& stmt) override;
-        void VisitFunctionStmt(const Stmt::Function& stmt) override;
-        void VisitClassStmt(const Stmt::Class& stmt) override;
-        void VisitIfStmt(const Stmt::If& stmt) override;
         void VisitPrintStmt(const Stmt::Print& stmt) override;
-        void VisitReturnStmt(const Stmt::Return& stmt) override;
         void VisitVarStmt(const Stmt::Var& stmt) override;
-        void VisitWhileStmt(const Stmt::While& stmt) override;
+        // void VisitBlockStmt(const Stmt::Block& stmt) override;
+        // void VisitFunctionStmt(const Stmt::Function& stmt) override;
+        // void VisitClassStmt(const Stmt::Class& stmt) override;
+        // void VisitIfStmt(const Stmt::If& stmt) override;
+        // void VisitReturnStmt(const Stmt::Return& stmt) override;
+        // void VisitWhileStmt(const Stmt::While& stmt) override;
 
         void Interpret(const std::vector<StmtPtr>& expr);
     private:
-        Environment(Environment);
+        Environment environment;
 
         std::any Evaluate(const Expr& expr) { return expr.Accept(*this);}
         void Execute(const StmtPtr& stmt) { return stmt->Accept(*this);}

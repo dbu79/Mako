@@ -12,6 +12,7 @@ add_executable(Mako
     src/Lexer/Lexer.cpp
     src/Parser/Parser.cpp
     src/Interpreter/Interpreter.cpp
+    src/Environment/Environment.cpp
 )
 
 target_include_directories(Mako PRIVATE 

@@ -1,12 +1,31 @@
 #include "Parser.h"
 #include "../Error/ErrorReporter.h"
+#include "src/Lexer/TokenType.h"
 #include "src/Parser/Stmt.h"
 #include <initializer_list>
 #include <memory>
 #include <vector>
 
 ExprPtr Parser::Expression(){
-    return Equality();
+    return Assignment();
+}
+
+ExprPtr Parser::Assignment(){
+    ExprPtr expr = Equality();
+    
+    if (Match({TokenType::EQUAL})){
+        Token equals = Previous();
+        ExprPtr value = Assignment();
+
+        if (auto* varExpr = dynamic_cast<Expr::Variable*>(expr.get())){
+            Token name = varExpr->name;
+            return std::make_unique<Expr::Assign>(std::move(name), std::move(value));
+        };
+
+        ErrorReporter::Error(equals, "Invalid assignment target.");
+    }
+
+    return expr;
 }
 
 ExprPtr Parser::Equality(){

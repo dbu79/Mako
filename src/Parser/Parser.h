@@ -11,6 +11,7 @@ class Parser {
         const std::vector<Token> m_Tokens; 
         size_t m_Current = 0;
         
+        ExprPtr Assignment();
         ExprPtr Expression();
         ExprPtr Equality();       
         ExprPtr Comparison();

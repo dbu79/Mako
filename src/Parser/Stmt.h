@@ -27,15 +27,15 @@ public:
 class Stmt::Visitor {
 public:
     virtual ~Visitor() = default;
-    virtual void VisitBlockStmt(const Block& stmt) = 0;
     virtual void VisitExpressionStmt(const Expression& stmt) = 0;
-    virtual void VisitFunctionStmt(const Function& stmt) = 0;
-    virtual void VisitClassStmt(const Class& stmt) = 0;
-    virtual void VisitIfStmt(const If& stmt) = 0;
     virtual void VisitPrintStmt(const Print& stmt) = 0;
-    virtual void VisitReturnStmt(const Return& stmt) = 0;
     virtual void VisitVarStmt(const Var& stmt) = 0;
-    virtual void VisitWhileStmt(const While& stmt) = 0;
+    // virtual void VisitBlockStmt(const Block& stmt) = 0;
+    // virtual void VisitFunctionStmt(const Function& stmt) = 0;
+    // virtual void VisitClassStmt(const Class& stmt) = 0;
+    // virtual void VisitIfStmt(const If& stmt) = 0;
+    // virtual void VisitReturnStmt(const Return& stmt) = 0;
+    // virtual void VisitWhileStmt(const While& stmt) = 0;
 };
 
 class Stmt::Block : public Stmt {
@@ -43,9 +43,9 @@ public:
     Block(std::vector<StmtPtr> statements)
         : statements(std::move(statements)) {}
 
-    void Accept(Visitor& visitor) const override {
-        visitor.VisitBlockStmt(*this);
-    }
+    // void Accept(Visitor& visitor) const override {
+    //     visitor.VisitBlockStmt(*this);
+    // }
 
     std::vector<StmtPtr> statements;
 };
@@ -69,9 +69,9 @@ public:
           params(std::move(params)),
           body(std::move(body)) {}
 
-    void Accept(Visitor& visitor) const override {
-        visitor.VisitFunctionStmt(*this);
-    }
+    // void Accept(Visitor& visitor) const override {
+    //     visitor.VisitFunctionStmt(*this);
+    // }
 
     Token name;
     std::vector<Token> params;
@@ -85,9 +85,9 @@ public:
           superclass(std::move(superclass)),
           methods(std::move(methods)) {}
 
-    void Accept(Visitor& visitor) const override {
-        visitor.VisitClassStmt(*this);
-    }
+    // void Accept(Visitor& visitor) const override {
+    //     visitor.VisitClassStmt(*this);
+    // }
 
     Token name;
     std::unique_ptr<Expr::Variable> superclass;
@@ -101,9 +101,9 @@ public:
           thenBranch(std::move(thenBranch)),
           elseBranch(std::move(elseBranch)) {}
 
-    void Accept(Visitor& visitor) const override {
-        visitor.VisitIfStmt(*this);
-    }
+    // void Accept(Visitor& visitor) const override {
+    //     visitor.VisitIfStmt(*this);
+    // }
 
     ExprPtr condition;
     StmtPtr thenBranch;
@@ -128,9 +128,9 @@ public:
         : keyword(std::move(keyword)),
           value(std::move(value)) {}
 
-    void Accept(Visitor& visitor) const override {
-        visitor.VisitReturnStmt(*this);
-    }
+    // void Accept(Visitor& visitor) const override {
+    //     visitor.VisitReturnStmt(*this);
+    // }
 
     Token keyword;
     ExprPtr value;
@@ -156,9 +156,9 @@ public:
         : condition(std::move(condition)),
           body(std::move(body)) {}
 
-    void Accept(Visitor& visitor) const override {
-        visitor.VisitWhileStmt(*this);
-    }
+    // void Accept(Visitor& visitor) const override {
+    //     visitor.VisitWhileStmt(*this);
+    // }
 
     ExprPtr condition;
     StmtPtr body;

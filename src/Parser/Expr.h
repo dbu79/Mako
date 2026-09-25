@@ -13,6 +13,7 @@ public:
     class Unary;
     class Variable;
     class Visitor;
+    class Assign;
 
     virtual ~Expr() = default;
     virtual std::any Accept(Visitor& visitor) const = 0;
@@ -26,6 +27,7 @@ class Expr::Visitor {
         virtual std::any VisitLiteralExpr(const Literal& expr) = 0;
         virtual std::any VisitUnaryExpr(const Unary& expr) = 0;
         virtual std::any VisitVariableExpr(const Variable& expr) = 0;
+        virtual std::any VisitAssignExpr(const Assign& expr) = 0;
 };
 
 class Expr::Binary : public Expr {
@@ -92,4 +94,17 @@ class Expr::Variable : public Expr {
         }
 
         Token name;
+};
+
+class Expr::Assign : public Expr {
+    public:
+        Assign(Token name, ExprPtr value)
+            : name(std::move(name)), value(std::move(value)) {};
+
+        std::any Accept(Visitor& visitor) const override {
+            return visitor.VisitAssignExpr(*this);
+        }
+        
+        Token name;
+        ExprPtr value;
 };

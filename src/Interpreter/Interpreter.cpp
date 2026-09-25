@@ -84,10 +84,14 @@ std::any Interpreter::VisitBinaryExpr(const Expr::Binary& expr){
 }
 
 std::any Interpreter::VisitVariableExpr(const Expr::Variable &expr){
-    return Environment.Get(expr.name);
+    return environment.Get(expr.name);
 }
 
-
+std::any Interpreter::VisitAssignExpr(const Expr::Assign &expr){
+    std::any value = Evaluate(*expr.value);
+    environment.Assign(expr.name, value);
+    return value;
+}
 void Interpreter::VisitExpressionStmt(const Stmt::Expression &stmt){
     Evaluate(*stmt.expression);
 }
@@ -97,7 +101,14 @@ void Interpreter::VisitPrintStmt(const Stmt::Print &stmt){
     std::cout << Stringify(value) << "\n";
 }
 
+void Interpreter::VisitVarStmt(const Stmt::Var &stmt){
+    std::any value = nullptr;
+    if (stmt.initializer != nullptr){
+        value = Evaluate(*stmt.initializer);
+    }
 
+    environment.Define(stmt.name.Lexeme, value);
+}
 
 bool Interpreter::IsTruthy(const std::any& object){
     if (!object.has_value() || object.type() == typeid(std::nullptr_t)) return false;
