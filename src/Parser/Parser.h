@@ -23,6 +23,7 @@ class Parser {
         StmtPtr Statement();
         StmtPtr PrintStatement();
         StmtPtr ExpressionStatement();
+        std::vector<StmtPtr> Block();
         StmtPtr VarDeclaration();
         StmtPtr Declaration();
 
@@ -36,7 +37,7 @@ class Parser {
         Token Consume(TokenType type, std::string message);
         
         void Synchronize();
-
+        
     public:
         Parser(const std::vector<Token>& tokens) : m_Tokens(tokens) {};
         std::vector<StmtPtr> Parse();      

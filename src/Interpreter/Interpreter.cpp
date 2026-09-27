@@ -3,6 +3,7 @@
 #include <any>
 #include <cstddef>
 #include <iostream>
+#include <memory>
 #include <sstream>
 #include <string>
 
@@ -108,6 +109,27 @@ void Interpreter::VisitVarStmt(const Stmt::Var &stmt){
     }
 
     environment.Define(stmt.name.Lexeme, value);
+}
+
+void Interpreter::VisitBlockStmt(const Stmt::Block &stmt){
+    ExecuteBlock(stmt.statements, std::make_shared<Environment>(environment));
+    return;
+}
+
+void Interpreter::ExecuteBlock(const std::vector<StmtPtr>& statements, std::shared_ptr<Environment> environment){
+    Environment previous = this->environment;
+    try {
+        this->environment = environment;
+        
+        for (const StmtPtr& statement : statements){
+            Execute(statement);
+        }
+    } catch (...) {
+        this->environment = previous;
+        throw;
+    }
+
+    this->environment = previous;
 }
 
 bool Interpreter::IsTruthy(const std::any& object){

@@ -17,7 +17,7 @@ class Interpreter : public Expr::Visitor, public Stmt::Visitor {
         void VisitExpressionStmt(const Stmt::Expression& stmt) override;
         void VisitPrintStmt(const Stmt::Print& stmt) override;
         void VisitVarStmt(const Stmt::Var& stmt) override;
-        // void VisitBlockStmt(const Stmt::Block& stmt) override;
+        void VisitBlockStmt(const Stmt::Block& stmt) override;
         // void VisitFunctionStmt(const Stmt::Function& stmt) override;
         // void VisitClassStmt(const Stmt::Class& stmt) override;
         // void VisitIfStmt(const Stmt::If& stmt) override;
@@ -30,6 +30,7 @@ class Interpreter : public Expr::Visitor, public Stmt::Visitor {
 
         std::any Evaluate(const Expr& expr) { return expr.Accept(*this);}
         void Execute(const StmtPtr& stmt) { return stmt->Accept(*this);}
+        void ExecuteBlock(const std::vector<StmtPtr>& statements, std::shared_ptr<Environment> environment);
 
         bool IsTruthy(const std::any& object);
         bool IsEqual(const std::any& a, const std::any&  b);

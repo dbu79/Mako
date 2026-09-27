@@ -1,7 +1,5 @@
 #include "Parser.h"
 #include "../Error/ErrorReporter.h"
-#include "src/Lexer/TokenType.h"
-#include "src/Parser/Stmt.h"
 #include <initializer_list>
 #include <memory>
 #include <vector>
@@ -114,7 +112,7 @@ ExprPtr Parser::Primary(){
 
 StmtPtr Parser::Statement(){
     if (Match({TokenType::PRINT})) return PrintStatement();
-
+    if (Match({TokenType::LEFTBRACE})) return std::make_unique<Stmt::Block>(Block());
     return ExpressionStatement();
 }
 
@@ -130,14 +128,15 @@ StmtPtr Parser::ExpressionStatement(){
     return std::make_unique<Stmt::Expression>(std::move(value));
 }
 
-StmtPtr Parser::Declaration(){
-    try {
-        if (Match({TokenType::VAR})) return VarDeclaration();
-        return Statement();
-    } catch (const ErrorReporter::ParseError& error){
-        Synchronize();
-        return nullptr;
+std::vector<StmtPtr> Parser::Block(){
+    std::vector<StmtPtr> statements; 
+
+    while (!Check(TokenType::RIGHTBRACE) && !IsAtEnd()){
+        statements.emplace_back(Declaration());
     }
+
+    Consume(TokenType::RIGHTBRACE, "Expect '}' after block.");
+    return statements;
 }
 
 StmtPtr Parser::VarDeclaration(){
@@ -152,13 +151,14 @@ StmtPtr Parser::VarDeclaration(){
     return std::make_unique<Stmt::Var>(std::move(name), std::move(initializer));
 }
 
-std::vector<StmtPtr> Parser::Parse(){
-    std::vector<StmtPtr> statements; 
-    while (!IsAtEnd()){
-        statements.emplace_back(Declaration());
+StmtPtr Parser::Declaration(){
+    try {
+        if (Match({TokenType::VAR})) return VarDeclaration();
+        return Statement();
+    } catch (const ErrorReporter::ParseError& error){
+        Synchronize();
+        return nullptr;
     }
- 
-    return statements;
 }
 
 bool Parser::Match(std::initializer_list<TokenType> types){
@@ -222,4 +222,12 @@ void Parser::Synchronize(){
     }
 }
 
+std::vector<StmtPtr> Parser::Parse(){
+    std::vector<StmtPtr> statements; 
+    while (!IsAtEnd()){
+        statements.emplace_back(Declaration());
+    }
+ 
+    return statements;
+}
 

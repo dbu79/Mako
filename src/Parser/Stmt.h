@@ -30,7 +30,7 @@ public:
     virtual void VisitExpressionStmt(const Expression& stmt) = 0;
     virtual void VisitPrintStmt(const Print& stmt) = 0;
     virtual void VisitVarStmt(const Var& stmt) = 0;
-    // virtual void VisitBlockStmt(const Block& stmt) = 0;
+    virtual void VisitBlockStmt(const Block& stmt) = 0;
     // virtual void VisitFunctionStmt(const Function& stmt) = 0;
     // virtual void VisitClassStmt(const Class& stmt) = 0;
     // virtual void VisitIfStmt(const If& stmt) = 0;
@@ -43,9 +43,9 @@ public:
     Block(std::vector<StmtPtr> statements)
         : statements(std::move(statements)) {}
 
-    // void Accept(Visitor& visitor) const override {
-    //     visitor.VisitBlockStmt(*this);
-    // }
+    void Accept(Visitor& visitor) const override {
+        visitor.VisitBlockStmt(*this);
+    }
 
     std::vector<StmtPtr> statements;
 };
