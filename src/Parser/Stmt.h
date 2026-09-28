@@ -33,7 +33,7 @@ public:
     virtual void VisitBlockStmt(const Block& stmt) = 0;
     // virtual void VisitFunctionStmt(const Function& stmt) = 0;
     // virtual void VisitClassStmt(const Class& stmt) = 0;
-    // virtual void VisitIfStmt(const If& stmt) = 0;
+    virtual void VisitIfStmt(const If& stmt) = 0;
     // virtual void VisitReturnStmt(const Return& stmt) = 0;
     // virtual void VisitWhileStmt(const While& stmt) = 0;
 };
@@ -101,9 +101,9 @@ public:
           thenBranch(std::move(thenBranch)),
           elseBranch(std::move(elseBranch)) {}
 
-    // void Accept(Visitor& visitor) const override {
-    //     visitor.VisitIfStmt(*this);
-    // }
+    void Accept(Visitor& visitor) const override {
+        visitor.VisitIfStmt(*this);
+    }
 
     ExprPtr condition;
     StmtPtr thenBranch;

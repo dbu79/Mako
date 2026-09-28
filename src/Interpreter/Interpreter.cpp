@@ -17,12 +17,24 @@ void Interpreter::Interpret(const std::vector<StmtPtr>& statements){
     }
 }
 
+std::any Interpreter::VisitGroupingExpr(const Expr::Grouping& expr){
+    return Evaluate(*expr.expression);
+}
+
 std::any Interpreter::VisitLiteralExpr(const Expr::Literal& expr){
     return expr.value;
 }
 
-std::any Interpreter::VisitGroupingExpr(const Expr::Grouping& expr){
-    return Evaluate(*expr.expression);
+std::any Interpreter::VisitLogicalExpr(const Expr::Logical& expr){
+    std::any left = Evaluate(*expr.left);
+
+    if (expr.op.Type == TokenType::OR){
+        if (IsTruthy(left)) return left;
+    } else {
+        if (!IsTruthy(left)) return left;
+    }
+
+    return Evaluate(*expr.right);
 }
 
 std::any Interpreter::VisitUnaryExpr(const Expr::Unary& expr){
@@ -114,6 +126,16 @@ void Interpreter::VisitVarStmt(const Stmt::Var &stmt){
 void Interpreter::VisitBlockStmt(const Stmt::Block &stmt){
     ExecuteBlock(stmt.statements, std::make_shared<Environment>(environment));
     return;
+}
+
+void Interpreter::VisitIfStmt(const Stmt::If &stmt){
+    if (IsTruthy(Evaluate(*stmt.condition))){
+        Execute(stmt.thenBranch);
+    } else if (stmt.elseBranch != nullptr){
+        Execute(stmt.elseBranch);
+    } else {
+        return;
+    }
 }
 
 void Interpreter::ExecuteBlock(const std::vector<StmtPtr>& statements, std::shared_ptr<Environment> environment){

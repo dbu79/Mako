@@ -1,5 +1,7 @@
 #include "Parser.h"
 #include "../Error/ErrorReporter.h"
+#include "src/Lexer/TokenType.h"
+#include "src/Parser/Expr.h"
 #include <initializer_list>
 #include <memory>
 #include <vector>
@@ -9,7 +11,7 @@ ExprPtr Parser::Expression(){
 }
 
 ExprPtr Parser::Assignment(){
-    ExprPtr expr = Equality();
+    ExprPtr expr = Or();
     
     if (Match({TokenType::EQUAL})){
         Token equals = Previous();
@@ -110,7 +112,33 @@ ExprPtr Parser::Primary(){
     throw ErrorReporter::Error(Peek(), "Expect expression.");
 }
 
+ExprPtr Parser::Or(){
+    ExprPtr expr = And();
+
+    while (Match({TokenType::OR})){
+        Token op = Previous();
+        ExprPtr right = And();
+        expr = std::make_unique<Expr::Logical>(std::move(expr), std::move(op), std::move(right));
+    }
+
+    return expr;
+}
+
+ExprPtr Parser::And(){
+    ExprPtr expr = Equality();
+
+    while (Match({TokenType::AND})){
+        Token op = Previous();
+        ExprPtr right = Equality();
+        expr = std::make_unique<Expr::Logical>(std::move(expr), std::move(op), std::move(right));
+    }
+
+    return expr;
+}
+
+
 StmtPtr Parser::Statement(){
+    if (Match({TokenType::IF})) return IfStatement();
     if (Match({TokenType::PRINT})) return PrintStatement();
     if (Match({TokenType::LEFTBRACE})) return std::make_unique<Stmt::Block>(Block());
     return ExpressionStatement();
@@ -126,6 +154,20 @@ StmtPtr Parser::ExpressionStatement(){
     ExprPtr value = Expression();
     Consume(TokenType::SEMICOLON, "Expect ';' after expression.");
     return std::make_unique<Stmt::Expression>(std::move(value));
+}
+
+StmtPtr Parser::IfStatement(){
+    Consume(TokenType::LEFTPAREN, "Expect '(' after 'if'.");
+    ExprPtr condition = Expression();
+    Consume(TokenType::RIGHTPAREN, "Expect ')' after if condition.");
+
+    StmtPtr thenBranch = Statement();
+    StmtPtr elseBranch = nullptr;
+    if (Match({TokenType::ELSE})){
+        elseBranch = Statement();
+    }
+
+    return std::make_unique<Stmt::If>(std::move(condition), std::move(thenBranch), std::move(elseBranch));
 }
 
 std::vector<StmtPtr> Parser::Block(){

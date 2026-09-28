@@ -19,10 +19,13 @@ class Parser {
         ExprPtr Factor();
         ExprPtr Unary();
         ExprPtr Primary();
+        ExprPtr Or();
+        ExprPtr And();
 
         StmtPtr Statement();
         StmtPtr PrintStatement();
         StmtPtr ExpressionStatement();
+        StmtPtr IfStatement();
         std::vector<StmtPtr> Block();
         StmtPtr VarDeclaration();
         StmtPtr Declaration();

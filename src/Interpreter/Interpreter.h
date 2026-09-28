@@ -7,10 +7,11 @@
 
 class Interpreter : public Expr::Visitor, public Stmt::Visitor {
     public:
-        std::any VisitLiteralExpr(const Expr::Literal& expr) override;
-        std::any VisitGroupingExpr(const Expr::Grouping& expr) override;
-        std::any VisitUnaryExpr(const Expr::Unary& expr) override;
         std::any VisitBinaryExpr(const Expr::Binary& expr) override;
+        std::any VisitGroupingExpr(const Expr::Grouping& expr) override;
+        std::any VisitLiteralExpr(const Expr::Literal& expr) override;
+        std::any VisitLogicalExpr(const Expr::Logical& expr) override;
+        std::any VisitUnaryExpr(const Expr::Unary& expr) override;
         std::any VisitVariableExpr(const Expr::Variable& expr) override;
         std::any VisitAssignExpr(const Expr::Assign& expr) override;
 
@@ -20,7 +21,7 @@ class Interpreter : public Expr::Visitor, public Stmt::Visitor {
         void VisitBlockStmt(const Stmt::Block& stmt) override;
         // void VisitFunctionStmt(const Stmt::Function& stmt) override;
         // void VisitClassStmt(const Stmt::Class& stmt) override;
-        // void VisitIfStmt(const Stmt::If& stmt) override;
+        void VisitIfStmt(const Stmt::If& stmt) override;
         // void VisitReturnStmt(const Stmt::Return& stmt) override;
         // void VisitWhileStmt(const Stmt::While& stmt) override;
 
