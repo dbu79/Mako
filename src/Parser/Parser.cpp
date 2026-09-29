@@ -1,7 +1,6 @@
 #include "Parser.h"
 #include "../Error/ErrorReporter.h"
 #include "src/Lexer/TokenType.h"
-#include "src/Parser/Expr.h"
 #include <initializer_list>
 #include <memory>
 #include <vector>
@@ -138,8 +137,10 @@ ExprPtr Parser::And(){
 
 
 StmtPtr Parser::Statement(){
+    if (Match({TokenType::FOR})) return ForStatement();
     if (Match({TokenType::IF})) return IfStatement();
     if (Match({TokenType::PRINT})) return PrintStatement();
+    if (Match({TokenType::WHILE})) return WhileStatement();
     if (Match({TokenType::LEFTBRACE})) return std::make_unique<Stmt::Block>(Block());
     return ExpressionStatement();
 }
@@ -168,6 +169,62 @@ StmtPtr Parser::IfStatement(){
     }
 
     return std::make_unique<Stmt::If>(std::move(condition), std::move(thenBranch), std::move(elseBranch));
+}
+
+StmtPtr Parser::WhileStatement(){
+    Consume(TokenType::LEFTPAREN, "Expect '(' after 'while'.");
+    ExprPtr condition = Expression();
+    Consume(TokenType::RIGHTPAREN, "Expect ')' after condition.");
+    StmtPtr body = Statement();
+
+    return std::make_unique<Stmt::While>(std::move(condition), std::move(body));
+}
+
+StmtPtr Parser::ForStatement(){
+    Consume(TokenType::LEFTPAREN, "Expect '(' after 'for'.");
+
+    StmtPtr initializer;
+    if (Match({TokenType::SEMICOLON})){
+        initializer = nullptr;
+    } else if (Match({TokenType::VAR})){
+        initializer = VarDeclaration();
+    } else {
+        initializer = ExpressionStatement();
+    }
+    
+    ExprPtr condition = nullptr;
+    if (!Check(TokenType::SEMICOLON)){
+        condition = Expression();
+    }
+    Consume(TokenType::SEMICOLON, "Expect ';' after loop condition.");
+    
+    ExprPtr increment = nullptr;
+    if (!Check(TokenType::RIGHTPAREN)){
+        increment = Expression();
+    }
+    Consume(TokenType::RIGHTPAREN, "Expect ')' after for clauses.");
+
+    StmtPtr body = Statement();
+    
+    if (increment != nullptr){
+        std::vector<StmtPtr> statements;
+        statements.push_back(std::move(body));
+        statements.push_back(std::make_unique<Stmt::Expression>(std::move(increment)));
+
+        body = std::make_unique<Stmt::Block>(std::move(statements));
+    }
+
+    if (condition == nullptr) condition = std::make_unique<Expr::Literal>(true);
+    body = std::make_unique<Stmt::While>(std::move(condition), std::move(body));
+
+    if (initializer != nullptr){
+        std::vector<StmtPtr> statements;
+        statements.push_back(std::move(initializer));
+        statements.push_back(std::move(body));
+        body = std::make_unique<Stmt::Block>(std::move(statements));
+    }
+
+    return body;
 }
 
 std::vector<StmtPtr> Parser::Block(){

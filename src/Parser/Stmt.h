@@ -35,7 +35,7 @@ public:
     // virtual void VisitClassStmt(const Class& stmt) = 0;
     virtual void VisitIfStmt(const If& stmt) = 0;
     // virtual void VisitReturnStmt(const Return& stmt) = 0;
-    // virtual void VisitWhileStmt(const While& stmt) = 0;
+    virtual void VisitWhileStmt(const While& stmt) = 0;
 };
 
 class Stmt::Block : public Stmt {
@@ -156,9 +156,9 @@ public:
         : condition(std::move(condition)),
           body(std::move(body)) {}
 
-    // void Accept(Visitor& visitor) const override {
-    //     visitor.VisitWhileStmt(*this);
-    // }
+    void Accept(Visitor& visitor) const override {
+        visitor.VisitWhileStmt(*this);
+    }
 
     ExprPtr condition;
     StmtPtr body;
