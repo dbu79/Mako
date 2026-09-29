@@ -21,6 +21,8 @@ class Parser {
         ExprPtr Primary();
         ExprPtr Or();
         ExprPtr And();
+        ExprPtr Call();
+        ExprPtr FinishCall(const ExprPtr& callee);
 
         StmtPtr Statement();
         StmtPtr PrintStatement();

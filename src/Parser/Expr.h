@@ -2,12 +2,14 @@
 
 #include <any>
 #include <utility>
+#include <vector>
 #include "../Lexer/Token.h"
 #include "ExprPtr.h"
 
 class Expr {
 public:
     class Binary;
+    class Call;
     class Grouping;
     class Literal;
     class Logical;
@@ -46,6 +48,20 @@ class Expr::Binary : public Expr {
         ExprPtr left;
         Token op;
         ExprPtr right;
+};
+
+class Expr::Call : public Expr {
+    public:
+        Call(ExprPtr callee, Token paren, std::vector<ExprPtr> arguments)
+            : callee(std::move(callee)), paren(std::move(paren)), arguments(std::move(arguments)) {}
+
+        std::any Accept(Visitor& visitor) const override {
+            return visitor.VisitCallExpr(*this);
+        }
+
+        ExprPtr callee;
+        Token paren;
+        std::vector<ExprPtr> arguments;
 };
 
 class Expr::Grouping : public Expr {

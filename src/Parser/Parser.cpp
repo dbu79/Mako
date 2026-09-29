@@ -83,7 +83,7 @@ ExprPtr Parser::Unary(){
         return std::make_unique<Expr::Unary>(op, std::move(right));
     }
 
-    return Primary();
+    return Call();
 }
 
 ExprPtr Parser::Primary(){
@@ -136,6 +136,31 @@ ExprPtr Parser::And(){
     return expr;
 }
 
+ExprPtr Parser::Call(){
+    ExprPtr expr = Primary();
+
+    while (true){
+        if (Match({TokenType::LEFTPAREN})){
+            expr = FinishCall();
+        } else {
+            break;
+        }
+    }
+
+    return expr;
+}
+
+ExprPtr Parser::FinishCall(const ExprPtr& callee){
+    std::vector<ExprPtr> arguments;
+    if (!Check(TokenType::RIGHTPAREN)){
+        do {
+            arguments.push_back(Expression());
+        } while (Match({TokenType::COMMA}));
+    }
+
+    Token paren = Consume(TokenType::RIGHTPAREN, "Expect ')' after arguments.");
+    return std::make_unique<Expr::Call>(std::move(callee), std::move(paren), std::move(arguments));
+}
 
 StmtPtr Parser::Statement(){
     if (Match({TokenType::IF})) return IfStatement();

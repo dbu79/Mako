@@ -8,6 +8,7 @@
 class Interpreter : public Expr::Visitor, public Stmt::Visitor {
     public:
         std::any VisitBinaryExpr(const Expr::Binary& expr) override;
+        std::any VisitCallExpr(const Expr::Call& expr) override;
         std::any VisitGroupingExpr(const Expr::Grouping& expr) override;
         std::any VisitLiteralExpr(const Expr::Literal& expr) override;
         std::any VisitLogicalExpr(const Expr::Logical& expr) override;

@@ -96,6 +96,17 @@ std::any Interpreter::VisitBinaryExpr(const Expr::Binary& expr){
     return nullptr;
 }
 
+std::any Interpreter::VisitCallExpr(const Expr::Call &expr){
+    std::any callee = Evaluate(*expr.callee);
+
+    std::vector<std::any> arguments;
+    for (ExprPtr argument : expr.arguments){
+        arguments.push_back(Evaluate(*arguments));
+    }
+
+    // To Do 
+}
+
 std::any Interpreter::VisitVariableExpr(const Expr::Variable &expr){
     return environment.Get(expr.name);
 }
