@@ -28,9 +28,12 @@ class Parser {
         StmtPtr PrintStatement();
         StmtPtr ExpressionStatement();
         StmtPtr IfStatement();
-        std::vector<StmtPtr> Block();
+        StmtPtr WhileStatement();
+        StmtPtr ForStatement();
         StmtPtr VarDeclaration();
         StmtPtr Declaration();
+        
+        std::vector<StmtPtr> Block();
 
         bool Match(std::initializer_list<TokenType> types);
         bool Check(TokenType type) const;

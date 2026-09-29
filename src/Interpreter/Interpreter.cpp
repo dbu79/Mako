@@ -149,6 +149,13 @@ void Interpreter::VisitIfStmt(const Stmt::If &stmt){
     }
 }
 
+void Interpreter::VisitWhileStmt(const Stmt::While &stmt){
+    while (IsTruthy(Evaluate(*stmt.condition))){
+        Execute(stmt.body);
+    }
+    return;
+}
+
 void Interpreter::ExecuteBlock(const std::vector<StmtPtr>& statements, std::shared_ptr<Environment> environment){
     Environment previous = this->environment;
     try {
