@@ -1,6 +1,5 @@
 #include "Parser.h"
 #include "../Error/ErrorReporter.h"
-#include "src/Lexer/TokenType.h"
 #include <initializer_list>
 #include <memory>
 #include <vector>
@@ -140,7 +139,7 @@ ExprPtr Parser::Call(){
 
     while (true){
         if (Match({TokenType::LEFTPAREN})){
-            expr = FinishCall();
+            expr = FinishCall(std::move(expr));
         } else {
             break;
         }
@@ -149,10 +148,13 @@ ExprPtr Parser::Call(){
     return expr;
 }
 
-ExprPtr Parser::FinishCall(const ExprPtr& callee){
+ExprPtr Parser::FinishCall(ExprPtr callee){
     std::vector<ExprPtr> arguments;
     if (!Check(TokenType::RIGHTPAREN)){
         do {
+            if (arguments.size() >= 255){
+                ErrorReporter::Error(Peek(), "Can't have more than 255 arguments");
+            }
             arguments.push_back(Expression());
         } while (Match({TokenType::COMMA}));
     }

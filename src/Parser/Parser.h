@@ -22,7 +22,7 @@ class Parser {
         ExprPtr Or();
         ExprPtr And();
         ExprPtr Call();
-        ExprPtr FinishCall(const ExprPtr& callee);
+        ExprPtr FinishCall(ExprPtr callee);
 
         StmtPtr Statement();
         StmtPtr PrintStatement();

@@ -1,5 +1,6 @@
 #include "Interpreter.h"
 #include "../Error/ErrorReporter.h"
+#include "../Parser/Callable.h"
 #include <any>
 #include <cstddef>
 #include <iostream>
@@ -100,11 +101,21 @@ std::any Interpreter::VisitCallExpr(const Expr::Call &expr){
     std::any callee = Evaluate(*expr.callee);
 
     std::vector<std::any> arguments;
-    for (ExprPtr argument : expr.arguments){
-        arguments.push_back(Evaluate(*arguments));
+    for (const ExprPtr& argument : expr.arguments){
+        arguments.push_back(Evaluate(*argument));
     }
+    
+    if (callee.type() != typeid(std::shared_ptr<MakoCallable>)){
+        throw ErrorReporter::RuntimeError(expr.paren, "Can only call functions and classes");
+    }
+    auto function = std::any_cast<std::shared_ptr<MakoCallable>>(callee);
 
-    // To Do 
+    if (arguments.size() != function->Arity()){
+        throw ErrorReporter::RuntimeError(expr.paren, 
+                "Expected " + std::to_string(function->Arity()) + " arguments but got " + std::to_string(arguments.size()) + ".");
+    }
+    
+    return function->Call(*this, arguments);
 }
 
 std::any Interpreter::VisitVariableExpr(const Expr::Variable &expr){

@@ -26,6 +26,7 @@ class Expr::Visitor {
     public:
         virtual ~Visitor() = default;
         virtual std::any VisitBinaryExpr(const Binary& expr) = 0;
+        virtual std::any VisitCallExpr(const Call& expr) = 0;
         virtual std::any VisitGroupingExpr(const Grouping& expr) = 0;
         virtual std::any VisitLiteralExpr(const Literal& expr) = 0;
         virtual std::any VisitLogicalExpr(const Logical& expr) = 0;
