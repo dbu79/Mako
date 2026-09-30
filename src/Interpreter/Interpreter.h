@@ -3,10 +3,15 @@
 #include "../Parser/Expr.h"
 #include "../Parser/Stmt.h"
 #include "../Environment/Environment.h"
+#include <memory>
 #include <string>
 
 class Interpreter : public Expr::Visitor, public Stmt::Visitor {
     public:
+        Interpreter();
+
+        std::shared_ptr<Environment> globals;
+
         std::any VisitBinaryExpr(const Expr::Binary& expr) override;
         std::any VisitCallExpr(const Expr::Call& expr) override;
         std::any VisitGroupingExpr(const Expr::Grouping& expr) override;
@@ -27,12 +32,12 @@ class Interpreter : public Expr::Visitor, public Stmt::Visitor {
         void VisitWhileStmt(const Stmt::While& stmt) override;
 
         void Interpret(const std::vector<StmtPtr>& expr);
+        void ExecuteBlock(const std::vector<StmtPtr>& statements, std::shared_ptr<Environment> environment);
     private:
-        Environment environment;
+        std::shared_ptr<Environment> environment;
 
         std::any Evaluate(const Expr& expr) { return expr.Accept(*this);}
         void Execute(const StmtPtr& stmt) { return stmt->Accept(*this);}
-        void ExecuteBlock(const std::vector<StmtPtr>& statements, std::shared_ptr<Environment> environment);
 
         bool IsTruthy(const std::any& object);
         bool IsEqual(const std::any& a, const std::any&  b);

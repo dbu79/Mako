@@ -1,12 +1,17 @@
 #include "Interpreter.h"
 #include "../Error/ErrorReporter.h"
-#include "../Parser/Callable.h"
+#include "../Mako/Callable.h"
 #include <any>
 #include <cstddef>
 #include <iostream>
 #include <memory>
 #include <sstream>
 #include <string>
+
+Interpreter::Interpreter()
+    : globals(std::make_shared<Environment>()), environment(globals) {
+        globals->Define("clock", std::shared_ptr<MakoCallable>(std::make_shared<NativeClock>()));
+    }
 
 void Interpreter::Interpret(const std::vector<StmtPtr>& statements){
     try {
@@ -119,12 +124,12 @@ std::any Interpreter::VisitCallExpr(const Expr::Call &expr){
 }
 
 std::any Interpreter::VisitVariableExpr(const Expr::Variable &expr){
-    return environment.Get(expr.name);
+    return environment->Get(expr.name);
 }
 
 std::any Interpreter::VisitAssignExpr(const Expr::Assign &expr){
     std::any value = Evaluate(*expr.value);
-    environment.Assign(expr.name, value);
+    environment->Assign(expr.name, value);
     return value;
 }
 void Interpreter::VisitExpressionStmt(const Stmt::Expression &stmt){
@@ -132,7 +137,9 @@ void Interpreter::VisitExpressionStmt(const Stmt::Expression &stmt){
 }
 
 void Interpreter::VisitFunctionStmt(const Stmt::Function &stmt){
-    // To do 
+    std::shared_ptr<MakoCallable> function = std::make_shared<MakoFunction>(&stmt);
+    environment->Define(stmt.name.Lexeme, function);
+    return;
 }
 
 void Interpreter::VisitPrintStmt(const Stmt::Print &stmt){
@@ -146,7 +153,7 @@ void Interpreter::VisitVarStmt(const Stmt::Var &stmt){
         value = Evaluate(*stmt.initializer);
     }
 
-    environment.Define(stmt.name.Lexeme, value);
+    environment->Define(stmt.name.Lexeme, value);
 }
 
 void Interpreter::VisitBlockStmt(const Stmt::Block &stmt){
@@ -172,7 +179,7 @@ void Interpreter::VisitWhileStmt(const Stmt::While &stmt){
 }
 
 void Interpreter::ExecuteBlock(const std::vector<StmtPtr>& statements, std::shared_ptr<Environment> environment){
-    Environment previous = this->environment;
+    auto previous = this->environment;
     try {
         this->environment = environment;
         

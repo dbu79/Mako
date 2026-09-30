@@ -1,6 +1,5 @@
 #include "Parser.h"
 #include "../Error/ErrorReporter.h"
-#include "src/Lexer/TokenType.h"
 #include <initializer_list>
 #include <memory>
 #include <vector>
@@ -255,17 +254,6 @@ StmtPtr Parser::ForStatement(){
     return body;
 }
 
-std::vector<StmtPtr> Parser::Block(){
-    std::vector<StmtPtr> statements; 
-
-    while (!Check(TokenType::RIGHTBRACE) && !IsAtEnd()){
-        statements.emplace_back(Declaration());
-    }
-
-    Consume(TokenType::RIGHTBRACE, "Expect '}' after block.");
-    return statements;
-}
-
 StmtPtr Parser::VarDeclaration(){
     Token name = Consume(TokenType::IDENTIFIER, "Expect variable name.");
 
@@ -306,6 +294,17 @@ StmtPtr Parser::Declaration(){
         Synchronize();
         return nullptr;
     }
+}
+
+std::vector<StmtPtr> Parser::Block(){
+    std::vector<StmtPtr> statements; 
+
+    while (!Check(TokenType::RIGHTBRACE) && !IsAtEnd()){
+        statements.emplace_back(Declaration());
+    }
+
+    Consume(TokenType::RIGHTBRACE, "Expect '}' after block.");
+    return statements;
 }
 
 bool Parser::Match(std::initializer_list<TokenType> types){
