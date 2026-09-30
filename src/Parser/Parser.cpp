@@ -1,5 +1,6 @@
 #include "Parser.h"
 #include "../Error/ErrorReporter.h"
+#include "src/Lexer/TokenType.h"
 #include <initializer_list>
 #include <memory>
 #include <vector>
@@ -277,8 +278,28 @@ StmtPtr Parser::VarDeclaration(){
     return std::make_unique<Stmt::Var>(std::move(name), std::move(initializer));
 }
 
+std::unique_ptr<Stmt::Function> Parser::Function(const std::string &kind){
+    Token name = Consume(TokenType::IDENTIFIER, "Expect " + kind + " name.");
+
+    Consume(TokenType::LEFTPAREN, "Expect '(' after " + kind + " name.");
+    std::vector<Token> params;
+    if (!Check(TokenType::RIGHTPAREN)){
+        do {
+            if (params.size() >= 255){
+                ErrorReporter::Error(Peek(), "Can't have more than 255 parameters.");
+            }
+            params.push_back(Consume(TokenType::IDENTIFIER, "Expect parameter name."));
+        } while (Match({TokenType::COMMA}));
+    }
+    Consume(TokenType::RIGHTPAREN, "Expect ')' after parameters.");
+    Consume(TokenType::LEFTBRACE, "Expect '{' before " + kind + " body.");
+    std::vector<StmtPtr> body = Block();
+    return std::make_unique<Stmt::Function>(std::move(name), std::move(params), std::move(body));
+}
+
 StmtPtr Parser::Declaration(){
     try {
+        if (Match({TokenType::FN})) return Function("function");
         if (Match({TokenType::VAR})) return VarDeclaration();
         return Statement();
     } catch (const ErrorReporter::ParseError& error){

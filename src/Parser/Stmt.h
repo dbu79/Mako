@@ -31,7 +31,7 @@ public:
     virtual void VisitPrintStmt(const Print& stmt) = 0;
     virtual void VisitVarStmt(const Var& stmt) = 0;
     virtual void VisitBlockStmt(const Block& stmt) = 0;
-    // virtual void VisitFunctionStmt(const Function& stmt) = 0;
+    virtual void VisitFunctionStmt(const Function& stmt) = 0;
     // virtual void VisitClassStmt(const Class& stmt) = 0;
     virtual void VisitIfStmt(const If& stmt) = 0;
     // virtual void VisitReturnStmt(const Return& stmt) = 0;
@@ -69,9 +69,9 @@ public:
           params(std::move(params)),
           body(std::move(body)) {}
 
-    // void Accept(Visitor& visitor) const override {
-    //     visitor.VisitFunctionStmt(*this);
-    // }
+    void Accept(Visitor& visitor) const override {
+        visitor.VisitFunctionStmt(*this);
+    }
 
     Token name;
     std::vector<Token> params;

@@ -131,6 +131,10 @@ void Interpreter::VisitExpressionStmt(const Stmt::Expression &stmt){
     Evaluate(*stmt.expression);
 }
 
+void Interpreter::VisitFunctionStmt(const Stmt::Function &stmt){
+    // To do 
+}
+
 void Interpreter::VisitPrintStmt(const Stmt::Print &stmt){
     std::any value = Evaluate(*stmt.expression);
     std::cout << Stringify(value) << "\n";

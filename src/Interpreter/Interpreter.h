@@ -20,7 +20,7 @@ class Interpreter : public Expr::Visitor, public Stmt::Visitor {
         void VisitPrintStmt(const Stmt::Print& stmt) override;
         void VisitVarStmt(const Stmt::Var& stmt) override;
         void VisitBlockStmt(const Stmt::Block& stmt) override;
-        // void VisitFunctionStmt(const Stmt::Function& stmt) override;
+        void VisitFunctionStmt(const Stmt::Function& stmt) override;
         // void VisitClassStmt(const Stmt::Class& stmt) override;
         void VisitIfStmt(const Stmt::If& stmt) override;
         // void VisitReturnStmt(const Stmt::Return& stmt) override;

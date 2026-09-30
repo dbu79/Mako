@@ -4,6 +4,7 @@
 #include "Expr.h"
 #include "../Lexer/TokenType.h"
 #include "Stmt.h"
+#include <string>
 #include <vector>
 
 class Parser {
@@ -27,6 +28,7 @@ class Parser {
         StmtPtr Statement();
         StmtPtr PrintStatement();
         StmtPtr ExpressionStatement();
+        std::unique_ptr<Stmt::Function> Function(const std::string& kind);
         StmtPtr IfStatement();
         StmtPtr WhileStatement();
         StmtPtr ForStatement();
