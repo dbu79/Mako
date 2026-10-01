@@ -28,7 +28,7 @@ class Interpreter : public Expr::Visitor, public Stmt::Visitor {
         void VisitFunctionStmt(const Stmt::Function& stmt) override;
         // void VisitClassStmt(const Stmt::Class& stmt) override;
         void VisitIfStmt(const Stmt::If& stmt) override;
-        // void VisitReturnStmt(const Stmt::Return& stmt) override;
+        void VisitReturnStmt(const Stmt::Return& stmt) override;
         void VisitWhileStmt(const Stmt::While& stmt) override;
 
         void Interpret(const std::vector<StmtPtr>& expr);

@@ -30,6 +30,7 @@ class Parser {
         StmtPtr ExpressionStatement();
         std::unique_ptr<Stmt::Function> Function(const std::string& kind);
         StmtPtr IfStatement();
+        StmtPtr ReturnStatement();
         StmtPtr WhileStatement();
         StmtPtr ForStatement();
         StmtPtr VarDeclaration();

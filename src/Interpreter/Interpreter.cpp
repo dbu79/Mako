@@ -1,6 +1,7 @@
 #include "Interpreter.h"
 #include "../Error/ErrorReporter.h"
 #include "../Callable/Callable.h"
+#include "src/Return.h"
 #include <any>
 #include <cstddef>
 #include <iostream>
@@ -136,7 +137,7 @@ void Interpreter::VisitExpressionStmt(const Stmt::Expression &stmt){
 }
 
 void Interpreter::VisitFunctionStmt(const Stmt::Function &stmt){
-    std::shared_ptr<MakoCallable> function = std::make_shared<MakoFunction>(&stmt);
+    std::shared_ptr<MakoCallable> function = std::make_shared<MakoFunction>(&stmt, environment);
     environment->Define(stmt.name.Lexeme, function);
     return;
 }
@@ -168,6 +169,13 @@ void Interpreter::VisitIfStmt(const Stmt::If &stmt){
     } else {
         return;
     }
+}
+
+void Interpreter::VisitReturnStmt(const Stmt::Return &stmt){
+    std::any value = nullptr;
+    if (stmt.value != nullptr) value = Evaluate(*stmt.value);
+    
+    throw Return{std::move(value)};
 }
 
 void Interpreter::VisitWhileStmt(const Stmt::While &stmt){

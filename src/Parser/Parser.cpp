@@ -1,5 +1,6 @@
 #include "Parser.h"
 #include "../Error/ErrorReporter.h"
+#include "src/Lexer/TokenType.h"
 #include <initializer_list>
 #include <memory>
 #include <vector>
@@ -167,6 +168,7 @@ StmtPtr Parser::Statement(){
     if (Match({TokenType::FOR})) return ForStatement();
     if (Match({TokenType::IF})) return IfStatement();
     if (Match({TokenType::PRINT})) return PrintStatement();
+    if (Match({TokenType::RETURN})) return ReturnStatement();
     if (Match({TokenType::WHILE})) return WhileStatement();
     if (Match({TokenType::LEFTBRACE})) return std::make_unique<Stmt::Block>(Block());
     return ExpressionStatement();
@@ -196,6 +198,17 @@ StmtPtr Parser::IfStatement(){
     }
 
     return std::make_unique<Stmt::If>(std::move(condition), std::move(thenBranch), std::move(elseBranch));
+}
+
+StmtPtr Parser::ReturnStatement(){
+    Token keyword = Previous();
+    ExprPtr value = nullptr;
+    if (!Check(TokenType::SEMICOLON)){
+        value = Expression();
+    }
+
+    Consume(TokenType::SEMICOLON, "Expect ';' after return value.");
+    return std::make_unique<Stmt::Return>(std::move(keyword), std::move(value));
 }
 
 StmtPtr Parser::WhileStatement(){

@@ -2,6 +2,7 @@
 
 #include "../Interpreter/Interpreter.h"
 #include "../Parser/Stmt.h"
+#include "src/Environment/Environment.h"
 #include <chrono>
 
 class Interpreter;
@@ -31,8 +32,8 @@ class NativeClock : public MakoCallable {
 
 class MakoFunction : public MakoCallable {
     public:
-        explicit MakoFunction(const Stmt::Function *declaration)
-            : declaration(declaration) {}
+        explicit MakoFunction(const Stmt::Function *declaration, std::shared_ptr<Environment> closure)
+            : declaration(declaration), closure(std::move(closure)) {}
 
         size_t Arity() const override { return declaration->params.size(); }
 
@@ -44,5 +45,6 @@ class MakoFunction : public MakoCallable {
         }
     private:
         const Stmt::Function *declaration;
+        const Environment closure;
     
 };
