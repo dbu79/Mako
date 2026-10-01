@@ -13,7 +13,7 @@ add_executable(Mako
     src/Parser/Parser.cpp
     src/Interpreter/Interpreter.cpp
     src/Environment/Environment.cpp
-    src/Mako/Callable.cpp
+    src/Callable/Callable.cpp
 )
 
 target_include_directories(Mako PRIVATE 
