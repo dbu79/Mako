@@ -1,7 +1,7 @@
 #pragma once
 
-#include "../Parser/Expr.h"
-#include "../Parser/Stmt.h"
+#include "../Parser/Expressions/Expr.h"
+#include "../Parser/Statements/Stmt.h"
 #include "../Environment/Environment.h"
 #include <memory>
 #include <string>

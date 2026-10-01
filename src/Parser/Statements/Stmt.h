@@ -3,8 +3,8 @@
 #include <memory>
 #include <utility>
 #include <vector>
-#include "Expr.h"
-#include "../Lexer/Token.h"
+#include "../Expressions/Expr.h"
+#include "../../Lexer/Token.h"
 #include "StmtPtr.h"
 
 class Stmt {
