@@ -82,7 +82,7 @@ ExprPtr Parser::Unary(){
         return std::make_unique<Expr::Unary>(op, std::move(right));
     }
 
-    return Call();
+    return Postfix();
 }
 
 ExprPtr Parser::Primary(){
@@ -109,6 +109,30 @@ ExprPtr Parser::Primary(){
     }
 
     throw ErrorReporter::Error(Peek(), "Expect expression.");
+}
+
+ExprPtr Parser::Postfix(){
+    ExprPtr expr = Call();
+
+    if (Match({TokenType::PLUSPLUS, TokenType::MINUSMINUS})){
+        Token op = Previous();
+
+        auto* var = dynamic_cast<Expr::Variable*>(expr.get());
+
+        if (!var){
+            ErrorReporter::Error(op, "Invalid increment target.");
+            return expr;
+        }
+
+        Token name = var->name;
+        bool inc = op.Type == TokenType::PLUSPLUS;
+        Token postfixOp(inc ? TokenType::PLUS : TokenType::MINUS, inc ? "+" : "-", nullptr, op.Line);
+        
+        ExprPtr one = std::make_unique<Expr::Literal>(1.0);
+        ExprPtr sum = std::make_unique<Expr::Binary>(std::move(expr), postfixOp, std::move(one));
+        return std::make_unique<Expr::Assign>(name, std::move(sum));
+    }
+    return expr;
 }
 
 ExprPtr Parser::Or(){

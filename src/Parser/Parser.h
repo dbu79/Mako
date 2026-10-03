@@ -1,9 +1,9 @@
 #pragma once
 
 #include "../Lexer/Token.h"
-#include "Expr.h"
+#include "Expressions/Expr.h"
 #include "../Lexer/TokenType.h"
-#include "Stmt.h"
+#include "Statements/Stmt.h"
 #include <string>
 #include <vector>
 
@@ -20,6 +20,7 @@ class Parser {
         ExprPtr Factor();
         ExprPtr Unary();
         ExprPtr Primary();
+        ExprPtr Postfix();
         ExprPtr Or();
         ExprPtr And();
         ExprPtr Call();
