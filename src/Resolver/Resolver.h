@@ -1,7 +1,6 @@
 #pragma once
 
 #include <vector>
-#include <stack>
 #include <unordered_map>
 
 #include "../Parser/Statements/Stmt.h"
@@ -11,21 +10,38 @@
 
 class Resolver : public Expr::Visitor, public Stmt::Visitor {
     private:
-        Interpreter interpreter;
-        std::stack<std::unordered_map<std::string, bool>> scopes;
+        Interpreter& interpreter;
+        std::vector<std::unordered_map<std::string, bool>> scopes;
 
+        void Resolve(const StmtPtr& stmt);
+        void Resolve(const ExprPtr& expr);
         void BeginScope();
         void EndScope();
         void Declare(const Token& name);
         void Define(const Token& name);
-        void Resolve(const StmtPtr& stmt);
-        void Resolve(const ExprPtr& expr);
+        void ResolveLocal(const Expr* expr, const Token& name);
+        void ResolveFunction(const Stmt::Function& function);
     public:
-        Resolver(const Interpreter& interpreter) : interpreter(interpreter) {}
+        Resolver(Interpreter& interpreter) : interpreter(interpreter) {}
         
         void VisitBlockStmt(const Stmt::Block& stmt) override;
         void VisitVarStmt(const Stmt::Var& stmt) override;
-        // To Do 
+        void VisitFunctionStmt(const Stmt::Function& stmt) override;
+        void VisitExpressionStmt(const Stmt::Expression& stmt) override;
+        void VisitIfStmt(const Stmt::If& stmt) override;
+        void VisitPrintStmt(const Stmt::Print& stmt) override;
+        void VisitReturnStmt(const Stmt::Return& stmt) override;
+        void VisitWhileStmt(const Stmt::While& stmt) override;
+
+        std::any VisitVariableExpr(const Expr::Variable& expr) override;
+        std::any VisitAssignExpr(const Expr::Assign& expr) override;
+        std::any VisitBinaryExpr(const Expr::Binary& expr) override;
+        std::any VisitCallExpr(const Expr::Call& expr) override;
+        std::any VisitGroupingExpr(const Expr::Grouping& expr) override;
+        std::any VisitLiteralExpr(const Expr::Literal& expr) override;
+        std::any VisitLogicalExpr(const Expr::Logical& expr) override;
+        std::any VisitUnaryExpr(const Expr::Unary& expr) override;
+
         void Resolve(const std::vector<StmtPtr>& statements);
 };
 
