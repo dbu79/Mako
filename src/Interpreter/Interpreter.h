@@ -5,12 +5,12 @@
 #include "../Environment/Environment.h"
 #include <memory>
 #include <string>
+#include <unordered_map>
 
 class Interpreter : public Expr::Visitor, public Stmt::Visitor {
+    friend class Resolver;
     public:
         Interpreter();
-
-        std::shared_ptr<Environment> globals;
 
         std::any VisitBinaryExpr(const Expr::Binary& expr) override;
         std::any VisitCallExpr(const Expr::Call& expr) override;
@@ -35,10 +35,12 @@ class Interpreter : public Expr::Visitor, public Stmt::Visitor {
         void ExecuteBlock(const std::vector<StmtPtr>& statements, std::shared_ptr<Environment> environment);
     private:
         std::shared_ptr<Environment> environment;
+        std::shared_ptr<Environment> globals;
+        std::unordered_map<const Expr*, int> locals;
 
         std::any Evaluate(const Expr& expr) { return expr.Accept(*this);}
         void Execute(const StmtPtr& stmt) { return stmt->Accept(*this);}
-
+        void Resolve(const Expr* expr, int depth);
         bool IsTruthy(const std::any& object);
         bool IsEqual(const std::any& a, const std::any&  b);
 

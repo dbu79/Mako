@@ -202,6 +202,10 @@ void Interpreter::ExecuteBlock(const std::vector<StmtPtr>& statements, std::shar
     this->environment = previous;
 }
 
+void Interpreter::Resolve(const Expr* expr, int depth){
+    locals.insert_or_assign(expr, depth);
+}
+
 bool Interpreter::IsTruthy(const std::any& object){
     if (!object.has_value() || object.type() == typeid(std::nullptr_t)) return false;
     if (object.type() == typeid(bool)) return std::any_cast<bool>(object);
