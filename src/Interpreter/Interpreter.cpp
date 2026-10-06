@@ -1,7 +1,8 @@
 #include "Interpreter.h"
 #include "../Error/ErrorReporter.h"
 #include "../Callable/Callable.h"
-#include "src/Return.h"
+#include "../Environment/Environment.h"
+#include "../Return.h"
 #include <any>
 #include <cstddef>
 #include <iostream>
@@ -125,12 +126,18 @@ std::any Interpreter::VisitCallExpr(const Expr::Call &expr){
 }
 
 std::any Interpreter::VisitVariableExpr(const Expr::Variable &expr){
-    return environment->Get(expr.name);
+    return LookupVariable(expr.name, &expr);
 }
 
 std::any Interpreter::VisitAssignExpr(const Expr::Assign &expr){
     std::any value = Evaluate(*expr.value);
-    environment->Assign(expr.name, value);
+    
+    auto it = locals.find(&expr);
+    if (it != locals.end()){
+        environment->assignAt(it->second, expr.name, value);
+    } else {
+        globals->Assign(expr.name, value);
+    }
     return value;
 }
 void Interpreter::VisitExpressionStmt(const Stmt::Expression &stmt){
@@ -221,6 +228,15 @@ bool Interpreter::IsEqual(const std::any& a, const std::any& b){
     }
 
     return a.type() == b.type();
+}
+
+std::any Interpreter::LookupVariable(const Token &name, const Expr *expr){
+    auto it = locals.find(expr);
+    if (it != locals.end()){
+        return environment->getAt(it->second, name.Lexeme);
+    } else {
+        return globals->Get(name);
+    }
 }
 
 void Interpreter::CheckNumberOperand(const Token &op, const std::any &operand){

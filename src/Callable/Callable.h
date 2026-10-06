@@ -2,7 +2,7 @@
 
 #include "../Interpreter/Interpreter.h"
 #include "../Parser/Statements/Stmt.h"
-#include "src/Environment/Environment.h"
+#include "../Environment/Environment.h"
 #include <chrono>
 
 class Interpreter;

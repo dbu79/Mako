@@ -34,8 +34,8 @@ class Interpreter : public Expr::Visitor, public Stmt::Visitor {
         void Interpret(const std::vector<StmtPtr>& expr);
         void ExecuteBlock(const std::vector<StmtPtr>& statements, std::shared_ptr<Environment> environment);
     private:
-        std::shared_ptr<Environment> environment;
         std::shared_ptr<Environment> globals;
+        std::shared_ptr<Environment> environment;
         std::unordered_map<const Expr*, int> locals;
 
         std::any Evaluate(const Expr& expr) { return expr.Accept(*this);}
@@ -43,6 +43,8 @@ class Interpreter : public Expr::Visitor, public Stmt::Visitor {
         void Resolve(const Expr* expr, int depth);
         bool IsTruthy(const std::any& object);
         bool IsEqual(const std::any& a, const std::any&  b);
+        
+        std::any LookupVariable(const Token& name, const Expr* expr);
 
         void CheckNumberOperand(const Token& op, const std::any& operand);
         void CheckNumberOperands(const Token& op, const std::any& operand1, const std::any& operand2);

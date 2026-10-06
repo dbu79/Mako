@@ -29,3 +29,20 @@ std::any Environment::Get(const Token& name){
 
     throw ErrorReporter::RuntimeError(name, "Undefined variable '" + name.Lexeme + "'.");
 }
+
+std::any Environment::getAt(int distance, const std::string &name){
+    return Ancestor(distance)->values[name];
+}
+
+void Environment::assignAt(int distance, const Token &name, const std::any &value){
+    Ancestor(distance)->values.insert_or_assign(name.Lexeme, value);
+}
+
+Environment* Environment::Ancestor(int distance){
+    Environment* environment = this;
+    for (int i = 0; i < distance; i++){
+        environment = environment->enclosing.get();
+    }
+
+    return environment;
+}
