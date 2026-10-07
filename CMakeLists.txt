@@ -14,6 +14,7 @@ add_executable(Mako
     src/Interpreter/Interpreter.cpp
     src/Environment/Environment.cpp
     src/Callable/Callable.cpp
+    src/Resolver/Resolver.cpp
 )
 
 target_include_directories(Mako PRIVATE 

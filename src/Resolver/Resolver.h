@@ -13,6 +13,12 @@ class Resolver : public Expr::Visitor, public Stmt::Visitor {
         Interpreter& interpreter;
         std::vector<std::unordered_map<std::string, bool>> scopes;
 
+        enum FunctionType {
+            NONE, FUNCTION
+        };
+
+        FunctionType currentFunction = NONE;
+
         void Resolve(const StmtPtr& stmt);
         void Resolve(const ExprPtr& expr);
         void BeginScope();
@@ -20,7 +26,7 @@ class Resolver : public Expr::Visitor, public Stmt::Visitor {
         void Declare(const Token& name);
         void Define(const Token& name);
         void ResolveLocal(const Expr* expr, const Token& name);
-        void ResolveFunction(const Stmt::Function& function);
+        void ResolveFunction(const Stmt::Function& function, FunctionType type);
     public:
         Resolver(Interpreter& interpreter) : interpreter(interpreter) {}
         

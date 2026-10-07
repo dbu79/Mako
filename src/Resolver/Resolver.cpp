@@ -33,6 +33,9 @@ void Resolver::EndScope(){
 void Resolver::Declare(const Token& name){
     if (scopes.empty()) return;
     auto& scope = scopes.back();
+    if (scope.contains(name.Lexeme)){
+        ErrorReporter::Error(name, "Already a variable with this name in this scope.");
+    }
     scope.insert_or_assign(name.Lexeme, false);
 }
 
@@ -50,7 +53,9 @@ void Resolver::ResolveLocal(const Expr* expr, const Token& name){
     }
 }
 
-void Resolver::ResolveFunction(const Stmt::Function& function){
+void Resolver::ResolveFunction(const Stmt::Function& function, FunctionType type){
+    FunctionType enclosingFunction = currentFunction;
+    currentFunction = type;
     BeginScope();
     for (const Token& param : function.params){
         Declare(param);
@@ -58,6 +63,7 @@ void Resolver::ResolveFunction(const Stmt::Function& function){
     }
     Resolve(function.body);
     EndScope();
+    currentFunction = enclosingFunction;
 }
 
 void Resolver::VisitBlockStmt(const Stmt::Block &stmt){
@@ -79,8 +85,8 @@ void Resolver::VisitVarStmt(const Stmt::Var &stmt) {
 void Resolver::VisitFunctionStmt(const Stmt::Function &stmt){
     Declare(stmt.name);
     Define(stmt.name);
-
-    ResolveFunction(stmt);
+    
+    ResolveFunction(stmt, FunctionType::FUNCTION);
 }
 
 void Resolver::VisitExpressionStmt(const Stmt::Expression &stmt){
@@ -101,6 +107,9 @@ void Resolver::VisitPrintStmt(const Stmt::Print &stmt){
 }
 
 void Resolver::VisitReturnStmt(const Stmt::Return &stmt){
+    if (currentFunction == NONE){
+        ErrorReporter::Error(stmt.keyword, "Can't return from top-level code.");
+    }
     if (stmt.value != nullptr){
         Resolve(stmt.value);
     }

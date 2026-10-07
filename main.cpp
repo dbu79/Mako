@@ -7,6 +7,7 @@
 #include "src/Parser/Parser.h"
 #include "src/Error/ErrorReporter.h"
 #include "src/Interpreter/Interpreter.h"
+#include "src/Resolver/Resolver.h"
 
 static Interpreter interpreter;
 
@@ -16,6 +17,10 @@ void Run(std::string source){
 
     Parser parser(tokens);
     std::vector<StmtPtr> statements = parser.Parse();
+    if (ErrorReporter::HadError()) return;
+
+    Resolver resolver(interpreter);
+    resolver.Resolve(statements);
     if (ErrorReporter::HadError()) return;
 
     interpreter.Interpret(statements);
