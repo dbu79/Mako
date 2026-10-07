@@ -169,6 +169,13 @@ void Interpreter::VisitBlockStmt(const Stmt::Block &stmt){
     return;
 }
 
+void Interpreter::VisitClassStmt(const Stmt::Class &stmt){
+    environment->Define(stmt.name.Lexeme, nullptr);
+    MakoClass klass = new MakoClass(stmt.name.Lexeme);
+    environment->Assign(stmt.name, klass);
+    return;
+}
+
 void Interpreter::VisitIfStmt(const Stmt::If &stmt){
     if (IsTruthy(Evaluate(*stmt.condition))){
         Execute(stmt.thenBranch);

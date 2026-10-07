@@ -32,7 +32,7 @@ public:
     virtual void VisitVarStmt(const Var& stmt) = 0;
     virtual void VisitBlockStmt(const Block& stmt) = 0;
     virtual void VisitFunctionStmt(const Function& stmt) = 0;
-    // virtual void VisitClassStmt(const Class& stmt) = 0;
+    virtual void VisitClassStmt(const Class& stmt) = 0;
     virtual void VisitIfStmt(const If& stmt) = 0;
     virtual void VisitReturnStmt(const Return& stmt) = 0;
     virtual void VisitWhileStmt(const While& stmt) = 0;
@@ -85,9 +85,9 @@ public:
           superclass(std::move(superclass)),
           methods(std::move(methods)) {}
 
-    // void Accept(Visitor& visitor) const override {
-    //     visitor.VisitClassStmt(*this);
-    // }
+    void Accept(Visitor& visitor) const override {
+        visitor.VisitClassStmt(*this);
+    }
 
     Token name;
     std::unique_ptr<Expr::Variable> superclass;

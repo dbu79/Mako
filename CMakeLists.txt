@@ -15,6 +15,8 @@ add_executable(Mako
     src/Environment/Environment.cpp
     src/Callable/Callable.cpp
     src/Resolver/Resolver.cpp
+    src/MakoClass.cpp
+    src/MakoInstance.cpp
 )
 
 target_include_directories(Mako PRIVATE 

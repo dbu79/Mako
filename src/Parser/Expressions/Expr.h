@@ -10,6 +10,7 @@ class Expr {
 public:
     class Binary;
     class Call;
+    class Get;
     class Grouping;
     class Literal;
     class Logical;
@@ -27,6 +28,7 @@ class Expr::Visitor {
         virtual ~Visitor() = default;
         virtual std::any VisitBinaryExpr(const Binary& expr) = 0;
         virtual std::any VisitCallExpr(const Call& expr) = 0;
+        virtual std::any VisitGetExpr(const Get& expr) = 0;
         virtual std::any VisitGroupingExpr(const Grouping& expr) = 0;
         virtual std::any VisitLiteralExpr(const Literal& expr) = 0;
         virtual std::any VisitLogicalExpr(const Logical& expr) = 0;
@@ -63,6 +65,19 @@ class Expr::Call : public Expr {
         ExprPtr callee;
         Token paren;
         std::vector<ExprPtr> arguments;
+};
+
+class Expr::Get : public Expr {
+    public:
+        Get(ExprPtr object, Token name) 
+            : object(std::move(object)), name(std::move(name)) {}
+
+        std::any Accept(Visitor& visitor) const override {
+            return visitor.VisitGetExpr(*this);
+        }
+
+        ExprPtr object;
+        Token name;
 };
 
 class Expr::Grouping : public Expr {

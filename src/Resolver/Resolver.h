@@ -31,6 +31,7 @@ class Resolver : public Expr::Visitor, public Stmt::Visitor {
         Resolver(Interpreter& interpreter) : interpreter(interpreter) {}
         
         void VisitBlockStmt(const Stmt::Block& stmt) override;
+        void VisitClassStmt(const Stmt::Class& stmt) override;
         void VisitVarStmt(const Stmt::Var& stmt) override;
         void VisitFunctionStmt(const Stmt::Function& stmt) override;
         void VisitExpressionStmt(const Stmt::Expression& stmt) override;
@@ -43,6 +44,7 @@ class Resolver : public Expr::Visitor, public Stmt::Visitor {
         std::any VisitAssignExpr(const Expr::Assign& expr) override;
         std::any VisitBinaryExpr(const Expr::Binary& expr) override;
         std::any VisitCallExpr(const Expr::Call& expr) override;
+        std::any VisitGetExpr(const Expr::Get& expr) override;
         std::any VisitGroupingExpr(const Expr::Grouping& expr) override;
         std::any VisitLiteralExpr(const Expr::Literal& expr) override;
         std::any VisitLogicalExpr(const Expr::Logical& expr) override;

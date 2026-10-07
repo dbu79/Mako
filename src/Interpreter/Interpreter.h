@@ -14,6 +14,7 @@ class Interpreter : public Expr::Visitor, public Stmt::Visitor {
 
         std::any VisitBinaryExpr(const Expr::Binary& expr) override;
         std::any VisitCallExpr(const Expr::Call& expr) override;
+        std::any VisitGetExpr(const Expr::Get& expr) override; // To Do 
         std::any VisitGroupingExpr(const Expr::Grouping& expr) override;
         std::any VisitLiteralExpr(const Expr::Literal& expr) override;
         std::any VisitLogicalExpr(const Expr::Logical& expr) override;
@@ -26,7 +27,7 @@ class Interpreter : public Expr::Visitor, public Stmt::Visitor {
         void VisitVarStmt(const Stmt::Var& stmt) override;
         void VisitBlockStmt(const Stmt::Block& stmt) override;
         void VisitFunctionStmt(const Stmt::Function& stmt) override;
-        // void VisitClassStmt(const Stmt::Class& stmt) override;
+        void VisitClassStmt(const Stmt::Class& stmt) override;
         void VisitIfStmt(const Stmt::If& stmt) override;
         void VisitReturnStmt(const Stmt::Return& stmt) override;
         void VisitWhileStmt(const Stmt::While& stmt) override;

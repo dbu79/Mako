@@ -73,6 +73,12 @@ void Resolver::VisitBlockStmt(const Stmt::Block &stmt){
     return;
 }
 
+void Resolver::VisitClassStmt(const Stmt::Class &stmt){
+    Declare(stmt.name);
+    Define(stmt.name);
+    return; 
+}
+
 void Resolver::VisitVarStmt(const Stmt::Var &stmt) {
     Declare(stmt.name);
     if (stmt.initializer != nullptr){
@@ -155,6 +161,11 @@ std::any Resolver::VisitCallExpr(const Expr::Call &expr){
         Resolve(argument);
     }
 
+    return nullptr;
+}
+
+std::any Resolver::VisitGetExpr(const Expr::Get &expr){
+    Resolve(expr.object);
     return nullptr;
 }
 

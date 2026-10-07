@@ -1,6 +1,6 @@
 #include "Parser.h"
 #include "../Error/ErrorReporter.h"
-#include "src/Lexer/TokenType.h"
+#include "../Lexer/TokenType.h"
 #include <initializer_list>
 #include <memory>
 #include <vector>
@@ -165,6 +165,9 @@ ExprPtr Parser::Call(){
     while (true){
         if (Match({TokenType::LEFTPAREN})){
             expr = FinishCall(std::move(expr));
+        } else if (Match({TokenType::DOT})){
+            Token name = Consume(TokenType::IDENTIFIER, "Expect property name after '.'.");
+            expr = std::make_unique<Expr::Get>(std::move(expr), std::move(name));
         } else {
             break;
         }
@@ -333,6 +336,18 @@ StmtPtr Parser::Declaration(){
     }
 }
 
+StmtPtr Parser::ClassDeclaration(){
+    Token name = Consume(TokenType::IDENTIFIER, "Expect class name.");
+    Consume(TokenType::LEFTBRACE, "Expect '{' before class body.");
+
+    std::vector<Stmt::Function> methods; 
+    while (!Check(TokenType::RIGHTBRACE) && !IsAtEnd()){
+        methods.push_back(Function("method"));
+    }
+
+    Consume(TokenType::RIGHTBRACE, "Expect '}' after class body.");
+    return std::unique_ptr<Stmt::Class>(name, methods);
+}
 std::vector<StmtPtr> Parser::Block(){
     std::vector<StmtPtr> statements; 
 
