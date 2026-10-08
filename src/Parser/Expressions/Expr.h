@@ -14,6 +14,7 @@ public:
     class Grouping;
     class Literal;
     class Logical;
+    class Set;
     class Unary;
     class Variable;
     class Visitor;
@@ -32,6 +33,7 @@ class Expr::Visitor {
         virtual std::any VisitGroupingExpr(const Grouping& expr) = 0;
         virtual std::any VisitLiteralExpr(const Literal& expr) = 0;
         virtual std::any VisitLogicalExpr(const Logical& expr) = 0;
+        virtual std::any VisitSetExpr(const Set& expr) = 0;
         virtual std::any VisitUnaryExpr(const Unary& expr) = 0;
         virtual std::any VisitVariableExpr(const Variable& expr) = 0;
         virtual std::any VisitAssignExpr(const Assign& expr) = 0;
@@ -118,18 +120,32 @@ class Expr::Logical : public Expr {
         ExprPtr right;
 };
 
+class Expr::Set : public Expr {
+    public:
+        Set(ExprPtr object, Token name, ExprPtr value) 
+            : object(std::move(object)), name(std::move(name)), value(std::move(value)) {}
+
+        std::any Accept(Visitor& visitor) const override {
+            return visitor.VisitSetExpr(*this);
+        }
+
+        ExprPtr object;
+        Token name;
+        ExprPtr value;
+};
+
 class Expr::Unary : public Expr {
-public:
-    Unary(Token op, ExprPtr right)
-        : op(std::move(op)),
-          right(std::move(right)) {}
+    public:
+        Unary(Token op, ExprPtr right)
+            : op(std::move(op)),
+              right(std::move(right)) {}
 
-    std::any Accept(Visitor& visitor) const override {
-        return visitor.VisitUnaryExpr(*this);
-    }
+        std::any Accept(Visitor& visitor) const override {
+            return visitor.VisitUnaryExpr(*this);
+        }
 
-    Token op;
-    ExprPtr right;
+        Token op;
+        ExprPtr right;
 };
 
 class Expr::Variable : public Expr {

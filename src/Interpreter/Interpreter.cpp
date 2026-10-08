@@ -4,7 +4,7 @@
 #include "../Callable/Callable.h"
 #include "../Environment/Environment.h"
 #include "../Return.h"
-#include "src/MakoInstance.h"
+#include "../MakoInstance.h"
 #include <any>
 #include <cstddef>
 #include <iostream>
@@ -45,6 +45,18 @@ std::any Interpreter::VisitLogicalExpr(const Expr::Logical& expr){
     }
 
     return Evaluate(*expr.right);
+}
+
+std::any Interpreter::VisitSetExpr(const Expr::Set &expr){
+    std::any object = Evaluate(*expr.object);
+
+    if (object.type() != typeid(std::shared_ptr<MakoInstance>)){
+        throw new ErrorReporter::RuntimeError(expr.name, "Only instances have fields.");
+    }
+
+    std::any value = Evaluate(*expr.value);
+    std::any_cast<std::shared_ptr<MakoInstance>>(object)->Set(expr.name, value);
+    return value;
 }
 
 std::any Interpreter::VisitUnaryExpr(const Expr::Unary& expr){

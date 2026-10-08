@@ -19,7 +19,9 @@ ExprPtr Parser::Assignment(){
         if (auto* varExpr = dynamic_cast<Expr::Variable*>(expr.get())){
             Token name = varExpr->name;
             return std::make_unique<Expr::Assign>(std::move(name), std::move(value));
-        };
+        } else if (auto* get = dynamic_cast<Expr::Get*>(expr.get())){
+            return std::make_unique<Expr::Set>(std::move(get->object), get->name, std::move(value));
+        }
 
         ErrorReporter::Error(equals, "Invalid assignment target.");
     }
@@ -340,14 +342,15 @@ StmtPtr Parser::ClassDeclaration(){
     Token name = Consume(TokenType::IDENTIFIER, "Expect class name.");
     Consume(TokenType::LEFTBRACE, "Expect '{' before class body.");
 
-    std::vector<Stmt::Function> methods; 
+    std::vector<std::unique_ptr<Stmt::Function>> methods; 
     while (!Check(TokenType::RIGHTBRACE) && !IsAtEnd()){
         methods.push_back(Function("method"));
     }
 
     Consume(TokenType::RIGHTBRACE, "Expect '}' after class body.");
-    return std::unique_ptr<Stmt::Class>(name, methods);
+    return std::make_unique<Stmt::Class>(std::move(name), std::move(methods));
 }
+
 std::vector<StmtPtr> Parser::Block(){
     std::vector<StmtPtr> statements; 
 

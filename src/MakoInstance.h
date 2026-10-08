@@ -15,6 +15,7 @@ class MakoInstance {
         std::string ToString() const;
         
         std::any Get(const Token& name);
+        void Set(const Token& name, std::any value);
     private: 
         std::shared_ptr<MakoClass> klass;
         std::unordered_map<std::string, std::any> fields;      

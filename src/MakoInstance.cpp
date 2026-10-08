@@ -1,6 +1,6 @@
 #include "MakoInstance.h"
 #include "MakoClass.h"
-#include "src/Error/ErrorReporter.h"
+#include "Error/ErrorReporter.h"
 
 MakoInstance::MakoInstance(std::shared_ptr<MakoClass> klass)
     : klass(std::move(klass)) {}
@@ -16,4 +16,8 @@ std::any MakoInstance::Get(const Token &name){
     }
 
     throw ErrorReporter::RuntimeError(name, "Unidentified property '" + name.Lexeme + "'.");
+}
+
+void MakoInstance::Set(const Token& name, std::any value){
+    fields.insert_or_assign(name.Lexeme, std::move(value));
 }

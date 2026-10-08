@@ -184,6 +184,12 @@ std::any Resolver::VisitLogicalExpr(const Expr::Logical &expr){
     return nullptr;
 }
 
+std::any Resolver::VisitSetExpr(const Expr::Set &expr){
+    Resolve(expr.value);
+    Resolve(expr.object);
+    return nullptr;
+}
+
 std::any Resolver::VisitUnaryExpr(const Expr::Unary &expr){
     Resolve(expr.right);
     return nullptr;
