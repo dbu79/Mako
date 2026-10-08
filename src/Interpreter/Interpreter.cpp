@@ -1,8 +1,10 @@
 #include "Interpreter.h"
+#include "../MakoClass.h"
 #include "../Error/ErrorReporter.h"
 #include "../Callable/Callable.h"
 #include "../Environment/Environment.h"
 #include "../Return.h"
+#include "src/MakoInstance.h"
 #include <any>
 #include <cstddef>
 #include <iostream>
@@ -125,6 +127,15 @@ std::any Interpreter::VisitCallExpr(const Expr::Call &expr){
     return function->Call(*this, arguments);
 }
 
+std::any Interpreter::VisitGetExpr(const Expr::Get &expr){
+    std::any object = Evaluate(*expr.object);
+    if (object.type() == typeid(std::shared_ptr<MakoInstance>)){
+        return std::any_cast<std::shared_ptr<MakoInstance>>(object)->Get(expr.name);
+    }
+
+    throw ErrorReporter::RuntimeError(expr.name, "Only instances have properties.");
+}
+
 std::any Interpreter::VisitVariableExpr(const Expr::Variable &expr){
     return LookupVariable(expr.name, &expr);
 }
@@ -171,7 +182,7 @@ void Interpreter::VisitBlockStmt(const Stmt::Block &stmt){
 
 void Interpreter::VisitClassStmt(const Stmt::Class &stmt){
     environment->Define(stmt.name.Lexeme, nullptr);
-    MakoClass klass = new MakoClass(stmt.name.Lexeme);
+    MakoClass klass(stmt.name.Lexeme);
     environment->Assign(stmt.name, klass);
     return;
 }
