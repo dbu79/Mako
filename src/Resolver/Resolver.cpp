@@ -2,6 +2,7 @@
 #include "../Error/ErrorReporter.h"
 #include "../Interpreter/Interpreter.h"
 #include <any>
+#include <ios>
 #include <unordered_map>
 #include <vector>
 
@@ -76,6 +77,11 @@ void Resolver::VisitBlockStmt(const Stmt::Block &stmt){
 void Resolver::VisitClassStmt(const Stmt::Class &stmt){
     Declare(stmt.name);
     Define(stmt.name);
+
+    for (const auto& method : stmt.methods){
+        FunctionType declaration = FunctionType::METHOD;
+        ResolveFunction(*method, declaration);
+    }
     return; 
 }
 

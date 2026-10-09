@@ -194,7 +194,14 @@ void Interpreter::VisitBlockStmt(const Stmt::Block &stmt){
 
 void Interpreter::VisitClassStmt(const Stmt::Class &stmt){
     environment->Define(stmt.name.Lexeme, nullptr);
-    MakoClass klass(stmt.name.Lexeme);
+    
+    std::unordered_map<std::string, MakoFunction> methods;
+    for (const auto& method : stmt.methods){
+        MakoFunction function(method.get(), environment);
+        methods.insert_or_assign(method->name.Lexeme, function);
+    }
+
+    auto klass = std::make_shared<MakoClass>(stmt.name.Lexeme, methods);
     environment->Assign(stmt.name, klass);
     return;
 }
