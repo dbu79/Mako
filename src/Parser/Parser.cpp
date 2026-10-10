@@ -331,6 +331,7 @@ std::unique_ptr<Stmt::Function> Parser::Function(const std::string &kind){
 
 StmtPtr Parser::Declaration(){
     try {
+        if (Match({TokenType::CLASS})) return ClassDeclaration();
         if (Match({TokenType::FN})) return Function("function");
         if (Match({TokenType::VAR})) return VarDeclaration();
         return Statement();

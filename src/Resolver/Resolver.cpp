@@ -74,6 +74,9 @@ void Resolver::VisitBlockStmt(const Stmt::Block &stmt){
 }
 
 void Resolver::VisitClassStmt(const Stmt::Class &stmt){
+    ClassType enclosingClass = currentClass;
+    currentClass = ClassType::CLASS;
+
     Declare(stmt.name);
     Define(stmt.name);
     
@@ -81,12 +84,15 @@ void Resolver::VisitClassStmt(const Stmt::Class &stmt){
     if (!scopes.empty()){
         scopes.back().insert_or_assign("this", true);
     }
-    EndScope();
 
     for (const auto& method : stmt.methods){
         FunctionType declaration = FunctionType::METHOD;
         ResolveFunction(*method, declaration);
     }
+
+    EndScope();
+
+    currentClass = enclosingClass;
     return; 
 }
 
@@ -202,6 +208,10 @@ std::any Resolver::VisitSetExpr(const Expr::Set &expr){
 }
 
 std::any Resolver::VisitThisExpr(const Expr::This &expr){
+    if (currentClass == NONE_CLASS){
+        ErrorReporter::Error(expr.keyword, "Can't use 'this' outside of a class.");
+        return nullptr;
+    }
     ResolveLocal(&expr, expr.keyword);
     return nullptr;
 }

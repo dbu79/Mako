@@ -205,7 +205,7 @@ void Interpreter::VisitClassStmt(const Stmt::Class &stmt){
         methods.insert_or_assign(method->name.Lexeme, function);
     }
 
-    auto klass = std::make_shared<MakoClass>(stmt.name.Lexeme, methods);
+    std::shared_ptr<MakoCallable> klass = std::make_shared<MakoClass>(stmt.name.Lexeme, methods);
     environment->Assign(stmt.name, klass);
     return;
 }

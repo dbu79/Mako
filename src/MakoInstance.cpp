@@ -16,7 +16,8 @@ std::any MakoInstance::Get(const Token &name){
     }
     
     if (const MakoFunction* method = klass->FindMethod(name.Lexeme)){
-        return method->Bind(shared_from_this());
+        std::shared_ptr<MakoCallable> bound = method->Bind(shared_from_this());
+        return bound;
     }
 
     throw ErrorReporter::RuntimeError(name, "Unidentified property '" + name.Lexeme + "'.");

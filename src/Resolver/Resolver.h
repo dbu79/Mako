@@ -18,6 +18,12 @@ class Resolver : public Expr::Visitor, public Stmt::Visitor {
         };
 
         FunctionType currentFunction = NONE;
+        
+        enum ClassType {
+            NONE_CLASS, CLASS 
+        };
+
+        ClassType currentClass = NONE_CLASS; 
 
         void Resolve(const StmtPtr& stmt);
         void Resolve(const ExprPtr& expr);

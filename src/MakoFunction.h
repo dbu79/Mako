@@ -38,7 +38,7 @@ class MakoFunction : public MakoCallable {
         explicit MakoFunction(const Stmt::Function *declaration, std::shared_ptr<Environment> closure)
             : declaration(declaration), closure(std::move(closure)) {}
         
-        MakoFunction Bind(std::shared_ptr<MakoInstance> instance) const;
+        std::shared_ptr<MakoFunction> Bind(std::shared_ptr<MakoInstance> instance) const;
 
         size_t Arity() const override { return declaration->params.size(); }
 
