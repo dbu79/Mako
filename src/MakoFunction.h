@@ -50,6 +50,6 @@ class MakoFunction : public MakoCallable {
         }
     private:
         const Stmt::Function *declaration;
-        const Environment closure;
+        Environment closure;
     
 };
