@@ -1,7 +1,7 @@
 #include "Interpreter.h"
 #include "../MakoClass.h"
 #include "../Error/ErrorReporter.h"
-#include "../Callable/Callable.h"
+#include "../MakoFunction.h"
 #include "../Environment/Environment.h"
 #include "../Return.h"
 #include "../MakoInstance.h"
@@ -57,6 +57,10 @@ std::any Interpreter::VisitSetExpr(const Expr::Set &expr){
     std::any value = Evaluate(*expr.value);
     std::any_cast<std::shared_ptr<MakoInstance>>(object)->Set(expr.name, value);
     return value;
+}
+
+std::any Interpreter::VisitThisExpr(const Expr::This &expr){
+    return LookupVariable(expr.keyword, &expr);
 }
 
 std::any Interpreter::VisitUnaryExpr(const Expr::Unary& expr){

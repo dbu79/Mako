@@ -97,9 +97,11 @@ ExprPtr Parser::Primary(){
     if (Match({TokenType::NIL})){
         return std::make_unique<Expr::Literal>(nullptr);
     }
-
     if (Match({TokenType::NUMBER, TokenType::STRING})){
         return std::make_unique<Expr::Literal>(Previous().Literal);
+    }
+    if (Match({TokenType::THIS})){
+        return std::make_unique<Expr::This>(Previous());
     }
     if (Match({TokenType::IDENTIFIER})){
         return std::make_unique<Expr::Variable>(Previous());

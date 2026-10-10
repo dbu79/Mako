@@ -8,7 +8,7 @@
 
 class MakoClass;
 
-class MakoInstance {
+class MakoInstance : public std::enable_shared_from_this<MakoInstance> {
     public: 
         explicit MakoInstance(std::shared_ptr<MakoClass> klass);
 

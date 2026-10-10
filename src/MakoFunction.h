@@ -3,9 +3,12 @@
 #include "Interpreter/Interpreter.h"
 #include "Parser/Statements/Stmt.h"
 #include "Environment/Environment.h"
+#include "MakoInstance.h"
 #include <chrono>
 
 class Interpreter;
+
+class MakoInstance;
 
 class MakoCallable {
     public:
@@ -34,6 +37,8 @@ class MakoFunction : public MakoCallable {
     public:
         explicit MakoFunction(const Stmt::Function *declaration, std::shared_ptr<Environment> closure)
             : declaration(declaration), closure(std::move(closure)) {}
+        
+        MakoFunction Bind(std::shared_ptr<MakoInstance> instance) const;
 
         size_t Arity() const override { return declaration->params.size(); }
 

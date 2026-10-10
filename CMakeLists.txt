@@ -13,8 +13,8 @@ add_executable(Mako
     src/Parser/Parser.cpp
     src/Interpreter/Interpreter.cpp
     src/Environment/Environment.cpp
-    src/Callable/Callable.cpp
     src/Resolver/Resolver.cpp
+    src/MakoFunction.cpp
     src/MakoClass.cpp
     src/MakoInstance.cpp
 )

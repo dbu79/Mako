@@ -1,6 +1,13 @@
 #include "MakoFunction.h"
 #include "Environment/Environment.h"
 #include "Return.h"
+#include <memory>
+
+MakoFunction MakoFunction::Bind(std::shared_ptr<MakoInstance> instance) const{
+    auto environment = std::make_shared<Environment>(closure);
+    environment->Define("this", instance);
+    return MakoFunction(declaration, environment);
+}
 
 std::any MakoFunction::Call(Interpreter &interpreter, const std::vector<std::any> &arguments){
     auto environment = std::make_shared<Environment>(closure);
@@ -17,3 +24,4 @@ std::any MakoFunction::Call(Interpreter &interpreter, const std::vector<std::any
 
     return std::any{};
 }
+

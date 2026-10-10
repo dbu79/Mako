@@ -2,7 +2,6 @@
 #include "../Error/ErrorReporter.h"
 #include "../Interpreter/Interpreter.h"
 #include <any>
-#include <ios>
 #include <unordered_map>
 #include <vector>
 
@@ -77,6 +76,12 @@ void Resolver::VisitBlockStmt(const Stmt::Block &stmt){
 void Resolver::VisitClassStmt(const Stmt::Class &stmt){
     Declare(stmt.name);
     Define(stmt.name);
+    
+    BeginScope();
+    if (!scopes.empty()){
+        scopes.back().insert_or_assign("this", true);
+    }
+    EndScope();
 
     for (const auto& method : stmt.methods){
         FunctionType declaration = FunctionType::METHOD;
@@ -193,6 +198,11 @@ std::any Resolver::VisitLogicalExpr(const Expr::Logical &expr){
 std::any Resolver::VisitSetExpr(const Expr::Set &expr){
     Resolve(expr.value);
     Resolve(expr.object);
+    return nullptr;
+}
+
+std::any Resolver::VisitThisExpr(const Expr::This &expr){
+    ResolveLocal(&expr, expr.keyword);
     return nullptr;
 }
 
