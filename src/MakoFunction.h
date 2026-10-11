@@ -35,8 +35,8 @@ class NativeClock : public MakoCallable {
 
 class MakoFunction : public MakoCallable {
     public:
-        explicit MakoFunction(const Stmt::Function *declaration, std::shared_ptr<Environment> closure)
-            : declaration(declaration), closure(std::move(closure)) {}
+        explicit MakoFunction(const Stmt::Function *declaration, std::shared_ptr<Environment> closure, const bool isInitializer)
+            : declaration(declaration), closure(std::move(closure)), isInitializer(std::move(isInitializer)){}
         
         std::shared_ptr<MakoFunction> Bind(std::shared_ptr<MakoInstance> instance) const;
 
@@ -51,5 +51,5 @@ class MakoFunction : public MakoCallable {
     private:
         const Stmt::Function *declaration;
         Environment closure;
-    
+        const bool isInitializer;
 };

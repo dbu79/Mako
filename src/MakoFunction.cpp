@@ -6,7 +6,7 @@
 std::shared_ptr<MakoFunction> MakoFunction::Bind(std::shared_ptr<MakoInstance> instance) const {
     auto environment = std::make_shared<Environment>(closure);
     environment->Define("this", instance);
-    return std::make_shared<MakoFunction>(declaration, environment);
+    return std::make_shared<MakoFunction>(declaration, environment, isInitializer);
 }
 
 std::any MakoFunction::Call(Interpreter &interpreter, const std::vector<std::any> &arguments){
@@ -21,6 +21,8 @@ std::any MakoFunction::Call(Interpreter &interpreter, const std::vector<std::any
     } catch (const Return &returnValue){
         return returnValue.value;
     }
+    
+    if (isInitializer) return closure.getAt(0,"this");
 
     return std::any{};
 }

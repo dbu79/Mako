@@ -172,7 +172,7 @@ void Interpreter::VisitExpressionStmt(const Stmt::Expression &stmt){
 }
 
 void Interpreter::VisitFunctionStmt(const Stmt::Function &stmt){
-    std::shared_ptr<MakoCallable> function = std::make_shared<MakoFunction>(&stmt, environment);
+    std::shared_ptr<MakoCallable> function = std::make_shared<MakoFunction>(&stmt, environment, false);
     environment->Define(stmt.name.Lexeme, function);
     return;
 }
@@ -201,7 +201,8 @@ void Interpreter::VisitClassStmt(const Stmt::Class &stmt){
     
     std::unordered_map<std::string, MakoFunction> methods;
     for (const auto& method : stmt.methods){
-        MakoFunction function(method.get(), environment);
+
+        MakoFunction function(method.get(), environment, method->name.Lexeme == "init");
         methods.insert_or_assign(method->name.Lexeme, function);
     }
 
