@@ -47,7 +47,7 @@ void Lexer::ScanToken(){
             AddToken(Match('=') ? TokenType::GREATEREQUAL : TokenType::GREATER);
             break;
         case '<':
-            AddToken(Match('=') ? TokenType::LESSEQUAL : TokenType::LESS);
+            AddToken(Match('=') ? TokenType::LESSEQUAL : (Match('-') ? TokenType::LEFTARROW : TokenType::LESS));
             break;
         case '+': 
             AddToken(Match('+') ? TokenType::PLUSPLUS : (Match('=') ? TokenType::PLUSEQUAL : TokenType::PLUS)); 

@@ -21,6 +21,7 @@ enum class TokenType {
     LESS, LESSEQUAL,
     PLUSPLUS, MINUSMINUS,
     PLUSEQUAL, MINUSEQUAL,
+    LEFTARROW,
 
     // Keywords
     AND, CLASS, ELSE, FALSE, FN, FOR, IF, NIL, OR, 
@@ -58,6 +59,7 @@ switch(type) {
     case TokenType::GREATEREQUAL: return "GREATEREQUAL";
     case TokenType::LESS: return "LESS";
     case TokenType::LESSEQUAL: return "LESSEQUAL";
+    case TokenType::LEFTARROW: return "LEFTARROW";
 
     case TokenType::PLUSPLUS: return "PLUSPLUS";
     case TokenType::MINUSMINUS: return "MINUSMINUS";
