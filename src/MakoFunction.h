@@ -51,5 +51,5 @@ class MakoFunction : public MakoCallable {
     private:
         const Stmt::Function *declaration;
         Environment closure;
-        const bool isInitializer;
+        bool isInitializer;
 };

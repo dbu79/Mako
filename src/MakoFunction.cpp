@@ -19,6 +19,7 @@ std::any MakoFunction::Call(Interpreter &interpreter, const std::vector<std::any
     try {
         interpreter.ExecuteBlock(declaration->body, environment);
     } catch (const Return &returnValue){
+        if (isInitializer) return closure.getAt(0, "this");
         return returnValue.value;
     }
     
