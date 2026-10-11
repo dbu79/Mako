@@ -87,6 +87,9 @@ void Resolver::VisitClassStmt(const Stmt::Class &stmt){
 
     for (const auto& method : stmt.methods){
         FunctionType declaration = FunctionType::METHOD;
+        if (method->name.Lexeme == "init"){
+            declaration = FunctionType::INITIALIZER;
+        }
         ResolveFunction(*method, declaration);
     }
 
@@ -134,6 +137,9 @@ void Resolver::VisitReturnStmt(const Stmt::Return &stmt){
         ErrorReporter::Error(stmt.keyword, "Can't return from top-level code.");
     }
     if (stmt.value != nullptr){
+        if (currentFunction == INITIALIZER){
+            ErrorReporter::Error(stmt.keyword, "Can't return a value from an initializer");
+        }
         Resolve(stmt.value);
     }
 

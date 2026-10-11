@@ -14,7 +14,7 @@ class Resolver : public Expr::Visitor, public Stmt::Visitor {
         std::vector<std::unordered_map<std::string, bool>> scopes;
 
         enum FunctionType {
-            NONE, FUNCTION, METHOD
+            NONE, FUNCTION, INITIALIZER, METHOD
         };
 
         FunctionType currentFunction = NONE;
