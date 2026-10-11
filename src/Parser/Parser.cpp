@@ -347,6 +347,7 @@ StmtPtr Parser::ClassDeclaration(){
 
     std::vector<std::unique_ptr<Stmt::Function>> methods; 
     while (!Check(TokenType::RIGHTBRACE) && !IsAtEnd()){
+        Consume(TokenType::FN, "Expect 'fn' before method name");
         methods.push_back(Function("method"));
     }
 
