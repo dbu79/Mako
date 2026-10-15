@@ -343,6 +343,11 @@ StmtPtr Parser::Declaration(){
 
 StmtPtr Parser::ClassDeclaration(){
     Token name = Consume(TokenType::IDENTIFIER, "Expect class name.");
+    std::unique_ptr<Expr::Variable> superclass = nullptr;
+    if (Match({TokenType::LEFTARROW})){
+        Consume(TokenType::IDENTIFIER, "Expect superclass name.");
+        superclass = std::make_unique<Expr::Variable>(Previous());
+    }
     Consume(TokenType::LEFTBRACE, "Expect '{' before class body.");
 
     std::vector<std::unique_ptr<Stmt::Function>> methods; 
@@ -352,7 +357,7 @@ StmtPtr Parser::ClassDeclaration(){
     }
 
     Consume(TokenType::RIGHTBRACE, "Expect '}' after class body.");
-    return std::make_unique<Stmt::Class>(std::move(name), std::move(methods));
+    return std::make_unique<Stmt::Class>(std::move(name), std::move(superclass), std::move(methods));
 }
 
 std::vector<StmtPtr> Parser::Block(){

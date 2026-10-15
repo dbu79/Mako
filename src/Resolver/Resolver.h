@@ -24,7 +24,10 @@ class Resolver : public Expr::Visitor, public Stmt::Visitor {
         };
 
         ClassType currentClass = NONE_CLASS; 
+        
 
+        void Resolve(const Stmt& stmt);
+        void Resolve(const Expr& expr);
         void Resolve(const StmtPtr& stmt);
         void Resolve(const ExprPtr& expr);
         void BeginScope();

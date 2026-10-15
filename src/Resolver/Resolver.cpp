@@ -12,15 +12,10 @@ void Resolver::Resolve(const std::vector<StmtPtr>& statements){
     return;
 }
 
-void Resolver::Resolve(const StmtPtr& stmt){
-    stmt->Accept(*this);
-    return;
-}
-
-void Resolver::Resolve(const ExprPtr& expr){
-    expr->Accept(*this);
-    return;
-}
+void Resolver::Resolve(const Stmt& stmt) { stmt.Accept(*this); }
+void Resolver::Resolve(const Expr& expr) { expr.Accept(*this); }
+void Resolver::Resolve(const StmtPtr& stmt) { Resolve(*stmt); }
+void Resolver::Resolve(const ExprPtr& expr) { Resolve(*expr); }
 
 void Resolver::BeginScope(){
     scopes.push_back(std::unordered_map<std::string, bool>());
@@ -80,6 +75,14 @@ void Resolver::VisitClassStmt(const Stmt::Class &stmt){
     Declare(stmt.name);
     Define(stmt.name);
     
+    if (stmt.superclass != nullptr && stmt.name.Lexeme == stmt.superclass->name.Lexeme){
+        ErrorReporter::Error(stmt.superclass->name, "A class can't inherit from itself.");
+    }
+
+    if (stmt.superclass != nullptr){
+        Resolve(*stmt.superclass);
+    }
+
     BeginScope();
     if (!scopes.empty()){
         scopes.back().insert_or_assign("this", true);

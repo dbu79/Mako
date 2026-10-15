@@ -1,8 +1,8 @@
 #include "MakoClass.h"
 #include "MakoInstance.h"
 
-MakoClass::MakoClass(std::string name,std::unordered_map<std::string, MakoFunction> methods) 
-    : name(std::move(name)), methods(std::move(methods)) {}
+MakoClass::MakoClass(std::string name, std::shared_ptr<MakoClass> superclass, std::unordered_map<std::string, MakoFunction> methods) 
+    : name(std::move(name)), superclass(std::move(superclass)), methods(std::move(methods)) {}
 
 
 const MakoFunction* MakoClass::FindMethod(const std::string &name) const {
@@ -10,6 +10,11 @@ const MakoFunction* MakoClass::FindMethod(const std::string &name) const {
     if (it != methods.end()){
         return &it->second;
     }
+    
+    if (superclass != nullptr){
+        return superclass->FindMethod(name);
+    }
+
     return nullptr;
 }
 

@@ -197,6 +197,16 @@ void Interpreter::VisitBlockStmt(const Stmt::Block &stmt){
 }
 
 void Interpreter::VisitClassStmt(const Stmt::Class &stmt){
+    std::shared_ptr<MakoClass> superclass = nullptr;
+    if (stmt.superclass != nullptr){
+        std::any value = Evaluate(*stmt.superclass);
+        if (value.type() == typeid(std::shared_ptr<MakoCallable>)){
+            superclass = std::dynamic_pointer_cast<MakoClass>(std::any_cast<std::shared_ptr<MakoCallable>>(value));
+        }
+        if (superclass == nullptr){
+            throw ErrorReporter::RuntimeError(stmt.superclass->name, "Superclasses must be a class.");
+        }
+    }
     environment->Define(stmt.name.Lexeme, nullptr);
     
     std::unordered_map<std::string, MakoFunction> methods;
@@ -205,8 +215,8 @@ void Interpreter::VisitClassStmt(const Stmt::Class &stmt){
         MakoFunction function(method.get(), environment, method->name.Lexeme == "init");
         methods.insert_or_assign(method->name.Lexeme, function);
     }
-
-    std::shared_ptr<MakoCallable> klass = std::make_shared<MakoClass>(stmt.name.Lexeme, methods);
+    
+    std::shared_ptr<MakoCallable> klass = std::make_shared<MakoClass>(stmt.name.Lexeme, superclass, methods);
     environment->Assign(stmt.name, klass);
     return;
 }
