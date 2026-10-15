@@ -106,10 +106,10 @@ std::any Interpreter::VisitBinaryExpr(const Expr::Binary& expr){
             if (left.type() == typeid(double) && right.type() == typeid(double)){
                 return std::any_cast<double>(left) + std::any_cast<double>(right);
             }
-            if (left.type() == typeid(std::string) && right.type() == typeid(std::string)){
-                return std::any_cast<std::string>(left) + std::any_cast<std::string>(right);
+            if (left.type() == typeid(std::string) || right.type() == typeid(std::string)){
+                return Stringify(left) + Stringify(right);
             }
-            throw ErrorReporter::RuntimeError(expr.op, "Operands must be two numbers or two strings.");
+            throw ErrorReporter::RuntimeError(expr.op, "Operands must be two numbers or at least one strings.");
         case TokenType::SLASH:
             CheckNumberOperands(expr.op, left, right);
             return std::any_cast<double>(left) / std::any_cast<double>(right);
