@@ -59,6 +59,22 @@ std::any Interpreter::VisitSetExpr(const Expr::Set &expr){
     return value;
 }
 
+std::any Interpreter::VisitSuperExpr(const Expr::Super &expr){
+    int distance = locals.at(&expr);
+
+    auto superclass = std::any_cast<std::shared_ptr<MakoClass>>(environment->getAt(distance, "super"));
+
+    auto object = std::any_cast<std::shared_ptr<MakoInstance>>(environment->getAt(distance - 1, "this"));
+
+    auto method = superclass->FindMethod(expr.method.Lexeme);
+
+    if (method == nullptr){
+        throw ErrorReporter::RuntimeError(expr.method, "Undefined property '" + expr.method.Lexeme + "'.");
+    }
+
+    return method->Bind(object);
+}
+
 std::any Interpreter::VisitThisExpr(const Expr::This &expr){
     return LookupVariable(expr.keyword, &expr);
 }
@@ -209,6 +225,11 @@ void Interpreter::VisitClassStmt(const Stmt::Class &stmt){
     }
     environment->Define(stmt.name.Lexeme, nullptr);
     
+    if (stmt.superclass != nullptr){
+        environment = std::make_shared<Environment>(environment);
+        environment->Define("super", superclass);
+    }
+
     std::unordered_map<std::string, MakoFunction> methods;
     for (const auto& method : stmt.methods){
 
@@ -217,6 +238,11 @@ void Interpreter::VisitClassStmt(const Stmt::Class &stmt){
     }
     
     std::shared_ptr<MakoCallable> klass = std::make_shared<MakoClass>(stmt.name.Lexeme, superclass, methods);
+
+    if (superclass != nullptr){
+        environment = environment->enclosing;
+    }
+
     environment->Assign(stmt.name, klass);
     return;
 }

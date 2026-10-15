@@ -100,6 +100,12 @@ ExprPtr Parser::Primary(){
     if (Match({TokenType::NUMBER, TokenType::STRING})){
         return std::make_unique<Expr::Literal>(Previous().Literal);
     }
+    if (Match({TokenType::SUPER})){
+        Token keyword = Previous();
+        Consume(TokenType::DOT, "Expect '.' after 'super'.");
+        Token method = Consume(TokenType::IDENTIFIER, "Expect superclass method name.");
+        return std::make_unique<Expr::Super>(std::move(keyword), std::move(method));
+    }
     if (Match({TokenType::THIS})){
         return std::make_unique<Expr::This>(Previous());
     }

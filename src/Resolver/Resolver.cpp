@@ -80,7 +80,15 @@ void Resolver::VisitClassStmt(const Stmt::Class &stmt){
     }
 
     if (stmt.superclass != nullptr){
+        currentClass = ClassType::SUBCLASS;
         Resolve(*stmt.superclass);
+    }
+
+    if (stmt.superclass != nullptr){
+        BeginScope();
+        if (!scopes.empty()){
+            scopes.back().insert_or_assign("super", true);
+        }
     }
 
     BeginScope();
@@ -97,6 +105,8 @@ void Resolver::VisitClassStmt(const Stmt::Class &stmt){
     }
 
     EndScope();
+
+    if (stmt.superclass != nullptr) EndScope();
 
     currentClass = enclosingClass;
     return; 
@@ -213,6 +223,16 @@ std::any Resolver::VisitLogicalExpr(const Expr::Logical &expr){
 std::any Resolver::VisitSetExpr(const Expr::Set &expr){
     Resolve(expr.value);
     Resolve(expr.object);
+    return nullptr;
+}
+
+std::any Resolver::VisitSuperExpr(const Expr::Super &expr){
+    if (currentClass == ClassType::NONE_CLASS){
+        ErrorReporter::Error(expr.keyword, "Can't use 'super' outside of a class.");
+    } else if (currentClass != ClassType::SUBCLASS) {
+        ErrorReporter::Error(expr.keyword, "Can't use 'super' in a class with no superclass.");
+    }
+    ResolveLocal(&expr, expr.keyword);
     return nullptr;
 }
 

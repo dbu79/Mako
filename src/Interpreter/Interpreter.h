@@ -18,6 +18,7 @@ class Interpreter : public Expr::Visitor, public Stmt::Visitor {
         std::any VisitGroupingExpr(const Expr::Grouping& expr) override;
         std::any VisitLiteralExpr(const Expr::Literal& expr) override;
         std::any VisitSetExpr(const Expr::Set& expr) override;
+        std::any VisitSuperExpr(const Expr::Super& expr) override;
         std::any VisitThisExpr(const Expr::This& expr) override;
         std::any VisitLogicalExpr(const Expr::Logical& expr) override;
         std::any VisitUnaryExpr(const Expr::Unary& expr) override;

@@ -9,7 +9,6 @@
 class Environment {
     private:
         std::unordered_map<std::string, std::any> values; 
-        std::shared_ptr<Environment> enclosing;
 
     public:
         void Define(const std::string& name, const std::any& value);
@@ -21,5 +20,7 @@ class Environment {
         Environment* Ancestor(int distance);
         Environment(std::shared_ptr<Environment> enclosing = nullptr) 
             : enclosing(std::move(enclosing)){} 
+
+        std::shared_ptr<Environment> enclosing;
 };
 

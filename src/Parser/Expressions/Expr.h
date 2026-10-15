@@ -15,6 +15,7 @@ public:
     class Literal;
     class Logical;
     class Set;
+    class Super;
     class This;
     class Unary;
     class Variable;
@@ -35,6 +36,7 @@ class Expr::Visitor {
         virtual std::any VisitLiteralExpr(const Literal& expr) = 0;
         virtual std::any VisitLogicalExpr(const Logical& expr) = 0;
         virtual std::any VisitSetExpr(const Set& expr) = 0;
+        virtual std::any VisitSuperExpr(const Super& expr) = 0;
         virtual std::any VisitThisExpr(const This& expr) = 0;
         virtual std::any VisitUnaryExpr(const Unary& expr) = 0;
         virtual std::any VisitVariableExpr(const Variable& expr) = 0;
@@ -134,6 +136,18 @@ class Expr::Set : public Expr {
         ExprPtr object;
         Token name;
         ExprPtr value;
+};
+
+class Expr::Super : public Expr {
+    public:
+        Super(Token keyword, Token method) : keyword(std::move(keyword)), method(std::move(method)) {}
+
+        std::any Accept(Visitor& visitor) const override {
+            return visitor.VisitSuperExpr(*this);
+        }
+
+        Token keyword;
+        Token method;
 };
 
 class Expr::This : public Expr {
