@@ -18,7 +18,7 @@ class Person2 {
     }
 }
 
-var person2 = Person2("Matthew", "21");
+var person2 = Person2("Matthew", 21);
 person2.info();
 
 

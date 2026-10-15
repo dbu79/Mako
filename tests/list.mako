@@ -1,0 +1,57 @@
+class Node {
+	fn init(val) {
+		this.val = val;
+		this.next = nil;
+		this.prev = nil;
+	}
+}
+
+
+class List {
+	fn init() {
+		this.top = nil;
+		this.size = 0;
+	}
+
+	fn push(val) {
+
+		this.size = this.size + 1;
+		var newTop = Node(val);
+
+		if (this.top == nil) {
+			this.top = newTop;
+			return;
+		}
+
+		var oldTop = this.top;
+		newTop.prev = oldTop;
+		oldTop.next = newTop;
+
+		this.top = newTop;
+	}
+
+	fn print_list() {
+		var current = this.top;
+		print "List of size " + this.size + ":";
+		
+		var outStr = "";
+		for(var i = 0; i < this.size; i++) {
+			if (i != this.size-1) {
+				outStr = outStr + current.val + " > ";
+			} else {
+				outStr = outStr + current.val;
+			}
+			current = current.prev;
+		}
+		print outStr;
+	}
+}
+
+var list = List();
+
+list.push(2);
+list.push(1);
+list.push(8);
+list.push(10);
+
+list.print_list();

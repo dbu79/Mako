@@ -1,9 +1,13 @@
 class Doughnut {
-        fn cook() {
-                print "Fry until golden brown.";
-            }
+    fn cook() {
+        print "Fry until golden brown.";
     }
-
-class BostonCream <- Doughnut {}
+}
+class BostonCream <- Doughnut {
+    fn cook() {
+        super.cook();
+        print "Pipe full of custard and coat with chocolate.";
+    }
+}
 
 BostonCream().cook();
